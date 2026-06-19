@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import LoginPage from "../modules/auth/LoginPage";
-// import DashboardPage from "../modules/dashboard/DashboardPage";
-// import TransactionsPage from "../modules/transactions/TransactionsPage";
-// import ApprovalsPage from "../modules/approvals/ApprovalsPage";
-// import UploadPage from "../modules/bulk-upload/UploadPage";
-// import ReportsPage from "../modules/reports/ReportsPage";
-// import NotificationsPage from "../modules/notifications/NotificationsPage";
+import DashboardPage from "../modules/dashboard/DashboardPage";
+import TransactionsPage from "../modules/transactions/TransactionsPage";
+import ApprovalsPage from "../modules/approvals/ApprovalsPage";
+import UploadPage from "../modules/bulk-upload/UploadPage";
+import ReportsPage from "../modules/reports/ReportsPage";
+import NotificationsPage from "../modules/notifications/NotificationsPage";
+import SettingsPage from "../modules/settings/SettingsPgae";
 
 export default function AppRoutes() {
   return (
@@ -17,12 +18,13 @@ export default function AppRoutes() {
 
         {/* Main System */}
         <Route element={<MainLayout />}>
-          {/* <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/approvals" element={<ApprovalsPage />} />
           <Route path="/bulk-upload" element={<UploadPage />} />
           <Route path="/reports" element={<ReportsPage />} />
-          <Route path="/notifications" element={<NotificationsPage />} /> */}
+          <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
