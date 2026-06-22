@@ -39,7 +39,7 @@ export default function Header() {
         {/* User Profile */}
         <div className="flex items-center gap-2 cursor-pointer hover:bg-[#e0e3e5] p-1 rounded-lg transition-colors">
           <div className="text-right hidden sm:block">
-            <p className="text-[13px] font-bold text-[#00355f]">Alex Chen</p>
+            <p className="text-[13px] font-bold text-[#00355f]">Arnel Gwen</p>
             <p className="text-[10px] text-[#505f76] font-bold uppercase tracking-wider">FinOps Lead</p>
           </div>
           
