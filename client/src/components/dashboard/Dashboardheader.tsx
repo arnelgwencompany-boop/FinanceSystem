@@ -10,7 +10,7 @@ export default function DashboardHeader() {
         <p className="text-[10px] font-bold uppercase tracking-widest text-[#4a7fa5] mb-1">
           Overview
         </p>
-        <h2 className="text-[24px] font-semibold text-[#00355f] leading-tight">
+        <h2 className="text-2xl font-bold text-[#00355f] leading-tight">
           Financial Overview
         </h2>
         <p className="text-[#505f76] text-[13px] mt-1">
