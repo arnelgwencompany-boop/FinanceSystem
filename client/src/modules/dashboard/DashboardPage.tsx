@@ -1,5 +1,4 @@
 import { 
-  Wallet, 
   Download, 
   Plus, 
   Banknote, 
@@ -12,6 +11,7 @@ import {
   Monitor, 
   Cloud, 
   Printer, 
+   Wallet,
   Laptop, 
   Edit,
   Info
@@ -28,59 +28,22 @@ export default function DashboardPage() {
   const transactions = [
     {
       id: 1,
-      date: "2023-10-24",
-      department: "Engineering",
+      department: "",
       type: "Asset Purchase",
-      icon: Monitor,
-      category: 'MacBook Pro M3 Max (14")',
-      amount: "$3,499.00",
-      status: "Completed",
-      statusStyle: "bg-green-100 text-green-700 border-green-200",
-    },
-    {
-      id: 2,
-      date: "2023-10-23",
-      department: "HR Operations",
-      type: "Petty Cash",
-      icon: Wallet,
-      category: "Office Stationary Restock",
-      amount: "$124.50",
-      status: "Completed",
-      statusStyle: "bg-green-100 text-green-700 border-green-200",
-    },
-    {
-      id: 3,
-      date: "2023-10-23",
-      department: "Marketing",
-      type: "SaaS Subscription",
-      icon: Cloud,
-      category: "Adobe Creative Cloud (Team)",
-      amount: "$1,200.00",
-      status: "Pending",
-      statusStyle: "bg-orange-100 text-orange-700 border-orange-200",
-    },
-    {
-      id: 4,
-      date: "2023-10-22",
-      department: "IT Support",
-      type: "Maintenance",
       icon: Printer,
-      category: "Printer Drum Replacement",
-      amount: "$340.00",
+      unit: "Office Printer",
+      item: "",
+      date: "",
+      description: "HP LaserJet Pro M404dn",
+      income: "",
+      payOut: "$1,200.00",
+      VAT: "",
+      withoutVAT: "",
+      deliveryFee: "",
+      balance: "",
       status: "Completed",
       statusStyle: "bg-green-100 text-green-700 border-green-200",
-    },
-    {
-      id: 5,
-      date: "2023-10-22",
-      department: "Sales",
-      type: "Asset Purchase",
-      icon: Laptop,
-      category: 'Dell UltraSharp 27" Monitors (5x)',
-      amount: "$2,450.00",
-      status: "Flagged",
-      statusStyle: "bg-red-100 text-red-700 border-red-200",
-    },
+    }
   ];
 
   return (
@@ -183,46 +146,82 @@ export default function DashboardPage() {
           
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-[#f7f9fb] border-b border-[#c2c7d1]">
-                  <th className="py-4 px-6 text-[11px] font-bold text-[#505f76] uppercase tracking-wider">Date</th>
-                  <th className="py-4 px-6 text-[11px] font-bold text-[#505f76] uppercase tracking-wider">Department</th>
-                  <th className="py-4 px-6 text-[11px] font-bold text-[#505f76] uppercase tracking-wider">Type</th>
-                  <th className="py-4 px-6 text-[11px] font-bold text-[#505f76] uppercase tracking-wider">Category</th>
-                  <th className="py-4 px-6 text-[11px] font-bold text-[#505f76] text-right uppercase tracking-wider">Amount</th>
-                  <th className="py-4 px-6 text-[11px] font-bold text-[#505f76] text-center uppercase tracking-wider">Status</th>
-                  <th className="py-4 px-6 text-[11px] font-bold text-[#505f76] uppercase tracking-wider"></th>
+               <thead>
+            <tr className="bg-[#f7f9fb] border-b border-[#c2c7d1]">
+              <th className="p-3 text-xs">Date</th>
+              <th className="p-3 text-xs">Department</th>
+              <th className="p-3 text-xs">Type</th>
+              <th className="p-3 text-xs">Unit</th>
+              <th className="p-3 text-xs">Item</th>
+              <th className="p-3 text-xs">Description</th>
+              <th className="p-3 text-xs text-right">Income</th>
+              <th className="p-3 text-xs text-right">Pay Out</th>
+              <th className="p-3 text-xs text-right">VAT</th>
+              <th className="p-3 text-xs text-right">Without VAT</th>
+              <th className="p-3 text-xs text-right">Delivery</th>
+              <th className="p-3 text-xs text-right">Balance</th>
+              <th className="p-3 text-xs text-center">Status</th>
+              <th className="p-3 text-xs"></th>
+            </tr>
+          </thead>
+               <tbody>
+            {transactions.map((t) => {
+              const Icon = t.icon;
+
+              return (
+                <tr
+                  key={t.id}
+                  className="hover:bg-[#F0F7FF] transition-colors group"
+                >
+                  <td className="p-3">{t.date}</td>
+
+                  <td className="p-3 font-semibold text-[#00355f]">
+                    {t.department}
+                  </td>
+
+                  <td className="p-3">
+                    <div className="flex items-center gap-1">
+                      {Icon && <Icon size={16} />}
+                      {t.type}
+                    </div>
+                  </td>
+
+                  <td className="p-3">{t.unit}</td>
+                  <td className="p-3">{t.item}</td>
+                  <td className="p-3">{t.description}</td>
+
+                  <td className="p-3 text-right text-green-600">
+                    {t.income}
+                  </td>
+
+                  <td className="p-3 text-right text-red-600 font-bold">
+                    {t.payOut}
+                  </td>
+
+                  <td className="p-3 text-right">{t.VAT}</td>
+                  <td className="p-3 text-right">{t.withoutVAT}</td>
+                  <td className="p-3 text-right">{t.deliveryFee}</td>
+                  <td className="p-3 text-right font-semibold">
+                    {t.balance}
+                  </td>
+
+                  <td className="p-3 text-center">
+                    <span
+                      className={`px-2 py-1 text-xs rounded border ${t.statusStyle}`}
+                    >
+                      {t.status}
+                    </span>
+                  </td>
+
+                  <td className="p-3 text-right">
+                    <button className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-blue-700">
+                      ✏️
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-[#c2c7d1]">
-                {transactions.map((t) => {
-                  const Icon = t.icon;
-                  return (
-                    <tr key={t.id} className="hover:bg-[#F0F7FF] transition-colors group cursor-pointer">
-                      <td className="py-4 px-6 font-mono text-[12px] text-[#42474f]">{t.date}</td>
-                      <td className="py-4 px-6 text-[14px] font-bold text-[#00355f]">{t.department}</td>
-                      <td className="py-4 px-6">
-                        <span className="flex items-center gap-1 text-[13px] text-[#505f76]">
-                          <Icon size={16} />
-                          {t.type}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-[14px]">{t.category}</td>
-                      <td className="py-4 px-6 text-right font-mono text-[12px] font-bold text-[#191c1e]">{t.amount}</td>
-                      <td className="py-4 px-6 text-center">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${t.statusStyle}`}>
-                          {t.status}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <button className="p-1 opacity-0 group-hover:opacity-100 transition-opacity text-[#727780] hover:text-[#00355f]">
-                          <Edit size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
+              );
+            })}
+          </tbody>
             </table>
           </div>
           
