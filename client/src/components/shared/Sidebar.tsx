@@ -2,7 +2,6 @@ import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   ArrowLeftRight,
-  Upload,
   FileText,
   CheckCircle,
   Bell,
@@ -13,7 +12,6 @@ import {
 const menuItems = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { name: "Transactions", path: "/transactions", icon: ArrowLeftRight },
-  { name: "Bulk Upload", path: "/bulk-upload", icon: Upload },
   { name: "Reports", path: "/reports", icon: FileText },
   { name: "Approvals", path: "/approvals", icon: CheckCircle },
   { name: "Notifications", path: "/notifications", icon: Bell },

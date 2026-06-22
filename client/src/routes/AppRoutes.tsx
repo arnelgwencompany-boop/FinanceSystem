@@ -4,7 +4,6 @@ import LoginPage from "../modules/auth/LoginPage";
 import DashboardPage from "../modules/dashboard/DashboardPage";
 import TransactionsPage from "../modules/transactions/TransactionsPage";
 import ApprovalsPage from "../modules/approvals/ApprovalsPage";
-import UploadPage from "../modules/bulk-upload/UploadPage";
 import ReportsPage from "../modules/reports/ReportsPage";
 import NotificationsPage from "../modules/notifications/NotificationsPage";
 import SettingsPage from "../modules/settings/SettingsPgae";
@@ -21,7 +20,6 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/approvals" element={<ApprovalsPage />} />
-          <Route path="/bulk-upload" element={<UploadPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
