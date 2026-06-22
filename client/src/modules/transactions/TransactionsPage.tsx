@@ -1,35 +1,85 @@
 import { useState } from "react";
 import { 
-  Download, PlusCircle, TrendingUp, TrendingDown, 
-  CloudUpload, Save, Search, Filter, Edit2, Trash2, 
+  Download, PlusCircle, TrendingUp, 
+  Search, Filter, Edit2, Trash2, 
   ChevronLeft, ChevronRight, Clock, CheckCircle 
 } from "lucide-react";
+import Papa from "papaparse";
 
 type Transaction = {
   id: number;
-  date: string;
   department: string;
-  type: string;
-  category: string;
-  amount: number;
+  unit: string;
+  item: string;
+  date: string;
   description: string;
+  payOut: number;
+  VAT: number;
+  withoutVAT: number;
+  deliveryFee: number;
+  balance: number;
   status: string;
 };
 
+
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([
-    { id: 1, date: "2023-11-24", department: "IT Ops", type: "Expense", category: "Hardware", amount: 1240.00, description: "MacBook Pro M3 Pro - Asset ID: 9921", status: "Pending" },
-    { id: 2, date: "2023-11-23", department: "Sales", type: "Income", category: "Software", amount: 5400.00, description: "Q4 Cloud Services Renewal", status: "Approved" },
-    { id: 3, date: "2023-11-22", department: "Marketing", type: "Expense", category: "Other", amount: 850.00, description: "Conference Booth Graphics Print", status: "Approved" },
+     {
+      id: 1,
+      department: "GA",
+      unit: "0",
+      item: "1",
+      date: "1/25/2024",
+      description: "AWEI headphone set(20 pcs)",
+      payOut: 2748.9,
+      VAT: 252.4,
+      withoutVAT: 2102.5,
+      deliveryFee: 394,
+      balance: 97251.10,
+      status: "Completed",
+    },
+    {
+      id: 2,
+      department: "GO",
+      unit: "0",
+      item: "2",
+      date: "1/11/2024",
+      description: "Humidity Temperature(2 pcs)",
+      payOut: 236.5,
+      VAT: 0,
+      withoutVAT: 178,
+      deliveryFee: 58.5,
+      balance: 97014.6,
+      status: "Completed",
+    },
+    {
+      id: 3,
+      department: "IE",
+      unit: "0",
+      item: "3",
+      date: "3/25/2024",
+      description: "mouse pad(20 pcs)",
+      payOut: 236.5,
+      VAT: 0,
+      withoutVAT: 178,
+      deliveryFee: 58.5,
+      balance: 97014.6,
+      status: "Completed",
+    },
+     
   ]);
-
+ // ===================================================
   const [form, setForm] = useState({
-    date: "",
     department: "",
-    type: "Expense",
-    category: "",
-    amount: "",
-    description: "",
+  unit: "",
+  item: "",
+  date: "",
+  description: "",
+  payOut: "",
+  VAT: "",
+  withoutVAT: "",
+  deliveryFee: "",
+  balance: "",
   });
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,24 +87,60 @@ export default function TransactionsPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+ // ===================================================
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newTransaction: Transaction = {
-      id: Date.now(),
-      date: form.date,
-      department: form.department,
-      type: form.type,
-      category: form.category,
-      amount: Number(form.amount),
-      description: form.description,
-      status: "Pending",
-    };
-
+  const newTransaction: Transaction = {
+    id: Date.now(),
+    department: form.department,
+    unit: form.unit,
+    item: form.item,
+    date: form.date,
+    description: form.description,
+    payOut: Number(form.payOut),
+    VAT: Number(form.VAT),
+    withoutVAT: Number(form.withoutVAT),
+    deliveryFee: Number(form.deliveryFee),
+    balance: Number(form.balance),
+    status: "Pending",
+  };
     setTransactions([newTransaction, ...transactions]);
-    setForm({ date: "", department: "", type: "Expense", category: "", amount: "", description: "" });
+    setForm({ department: "", unit: "", item: "", date: "", description: "", payOut: "", VAT: "", withoutVAT: "", deliveryFee: "", balance: "" });
   };
 
+    // ===================================================
+const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: (results) => {
+      const data = results.data as any[];
+
+      const formatted = data.map((row) => ({
+        id: Date.now() + Math.random(),
+        date: row.date,
+        department: row.department,
+        unit: row.unit,
+        item: row.item,
+        description: row.description,
+        payOut: Number(row.payOut),
+        VAT: Number(row.VAT),
+        withoutVAT: Number(row.withoutVAT),
+        deliveryFee: Number(row.deliveryFee),
+        balance: Number(row.balance),
+        status: "Pending",
+      }));
+
+      setTransactions((prev) => [...prev, ...formatted]);
+    },
+  });
+};
+  
+  // ===================================================
   const handleDelete = (id: number) => {
     setTransactions(transactions.filter((t) => t.id !== id));
   };
@@ -83,87 +169,85 @@ export default function TransactionsPage() {
         {/* Bento Layout Content */}
         <div className="grid grid-cols-12 gap-6 items-start">
           
-          {/* Section 1: Add New Transaction Form */}
-          <section className="col-span-12 xl:col-span-4 bg-white border border-[#c2c7d1] rounded-lg shadow-sm p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <PlusCircle className="text-[#00355f]" size={20} />
-              <h3 className="text-lg font-semibold text-[#191c1e]">Add New Transaction</h3>
-            </div>
+         <section className="col-span-12 xl:col-span-4 bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
+  {/* Header */}
+  <div className="flex items-center gap-3 mb-8">
+    <div className="p-2 bg-[#00355f]/10 rounded-lg">
+      <PlusCircle className="text-[#00355f]" size={24} />
+    </div>
+    <h3 className="text-xl font-bold text-[#00355f] tracking-tight">Add New Transaction</h3>
+  </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold uppercase tracking-wide text-[#727780]">Date</label>
-                  <input required type="date" name="date" value={form.date} onChange={handleChange} className="h-9 border border-[#c2c7d1] rounded px-3 text-[13px] focus:border-[#00355f] focus:ring-1 focus:ring-[#00355f] transition-all outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold uppercase tracking-wide text-[#727780]">Department</label>
-                  <select required name="department" value={form.department} onChange={handleChange} className="h-9 border border-[#c2c7d1] rounded px-3 text-[13px] focus:border-[#00355f] focus:ring-1 focus:ring-[#00355f] transition-all outline-none bg-white">
-                    <option value="">Select Dept</option>
-                    <option value="IT Ops">IT Ops</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Sales">Sales</option>
-                    <option value="Executive">Executive</option>
-                  </select>
-                </div>
-              </div>
+  <form onSubmit={handleSubmit} className="space-y-5">
+    {/* DATE + DEPARTMENT */}
+    <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</label>
+        <input required type="date" name="date" value={form.date} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" />
+      </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold uppercase tracking-wide text-[#727780]">Transaction Type</label>
-                <div className="flex gap-4">
-                  <label className={`flex-1 flex items-center justify-center gap-2 border rounded py-2 cursor-pointer transition-all ${form.type === "Income" ? "bg-[#0f4c81] text-[#8ebdf9] border-[#00355f]" : "border-[#c2c7d1] hover:bg-[#f2f4f6]"}`}>
-                    <input type="radio" name="type" value="Income" checked={form.type === "Income"} onChange={handleChange} className="hidden" />
-                    <TrendingUp size={16} />
-                    <span className="text-[11px] font-bold uppercase tracking-wide">Income</span>
-                  </label>
-                  <label className={`flex-1 flex items-center justify-center gap-2 border rounded py-2 cursor-pointer transition-all ${form.type === "Expense" ? "bg-[#0f4c81] text-[#8ebdf9] border-[#00355f]" : "border-[#c2c7d1] hover:bg-[#f2f4f6]"}`}>
-                    <input type="radio" name="type" value="Expense" checked={form.type === "Expense"} onChange={handleChange} className="hidden" />
-                    <TrendingDown size={16} />
-                    <span className="text-[11px] font-bold uppercase tracking-wide">Expense</span>
-                  </label>
-                </div>
-              </div>
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Department</label>
+        <select required name="department" value={form.department} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all">
+          <option value="">Select Dept</option>
+          <option value="IT Ops">IT Ops</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Sales">Sales</option>
+          <option value="Executive">Executive</option>
+        </select>
+      </div>
+    </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold uppercase tracking-wide text-[#727780]">Category</label>
-                  <select required name="category" value={form.category} onChange={handleChange} className="h-9 border border-[#c2c7d1] rounded px-3 text-[13px] focus:border-[#00355f] focus:ring-1 focus:ring-[#00355f] transition-all outline-none bg-white">
-                    <option value="">Select Cat</option>
-                    <option value="Hardware">Hardware</option>
-                    <option value="Software">Software</option>
-                    <option value="Maintenance">Maintenance</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold uppercase tracking-wide text-[#727780]">Amount</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#727780] font-mono">$</span>
-                    <input required type="number" name="amount" value={form.amount} onChange={handleChange} placeholder="0.00" step="0.01" className="w-full h-9 border border-[#c2c7d1] rounded pl-7 pr-3 text-[13px] font-mono text-right focus:border-[#00355f] focus:ring-1 focus:ring-[#00355f] transition-all outline-none" />
-                  </div>
-                </div>
-              </div>
+    {/* UNIT + ITEM */}
+    <div className="grid grid-cols-2 gap-4">
+      <input name="unit" placeholder="Unit" value={form.unit} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" />
+      <input name="item" placeholder="Item" value={form.item} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" />
+    </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold uppercase tracking-wide text-[#727780]">Description</label>
-                <textarea required name="description" value={form.description} onChange={handleChange} placeholder="Reference procurement ID or item description..." rows={3} className="border border-[#c2c7d1] rounded p-3 text-[13px] focus:border-[#00355f] focus:ring-1 focus:ring-[#00355f] transition-all outline-none resize-none"></textarea>
-              </div>
+    {/* DESCRIPTION */}
+    <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all h-24 resize-none" />
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold uppercase tracking-wide text-[#727780]">Attachments</label>
-                <div className="border-2 border-dashed border-[#c2c7d1] rounded-lg p-6 flex flex-col items-center justify-center gap-2 hover:bg-[#f2f4f6] transition-all cursor-pointer">
-                  <CloudUpload className="text-[#727780]" size={24} />
-                  <p className="text-[13px] text-[#727780]">Click to <span className="text-[#00355f] font-bold">Browse</span> or drag files here</p>
-                </div>
-              </div>
+  {/* FINANCIALS */}
+<div className="grid grid-cols-2 gap-4">
+  {['payOut', 'VAT', 'withoutVAT', 'deliveryFee'].map((field) => (
+    <input 
+      key={field} 
+      type="number" 
+      name={field} 
+      placeholder={field.replace(/([A-Z])/g, ' $1').trim()} 
+      // Add 'as keyof typeof form' here to satisfy TypeScript
+      value={form[field as keyof typeof form]}
+      onChange={handleChange} 
+      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" 
+    />
+  ))}
+  <input 
+    type="number" 
+    name="balance" 
+    placeholder="Balance" 
+    value={form.balance} 
+    onChange={handleChange} 
+    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all col-span-2" 
+  />
+</div>
 
-              <button type="submit" className="w-full bg-[#00355f] text-white py-3 rounded font-semibold hover:bg-[#00355f]/90 transition-all shadow-sm flex items-center justify-center gap-2 mt-2">
-                <Save size={18} />
-                Save & Submit
-              </button>
-            </form>
-          </section>
+    {/* SUBMIT */}
+    <button type="submit" className="w-full py-3 bg-[#00355f] hover:bg-[#002542] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98]">
+      Save Transaction
+    </button>
+  </form>
 
+  {/* BULK UPLOAD SECTION */}
+  <div className="mt-8 pt-8 border-t border-slate-100">
+    <label className="block text-sm font-semibold text-slate-700 mb-3">Bulk Import CSV / Excel</label>
+    <div className="space-y-3">
+      <input type="file" accept=".csv, .xlsx" onChange={handleFileUpload} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#00355f]/10 file:text-[#00355f] hover:file:bg-[#00355f]/20 cursor-pointer" />
+      <button type="button" className="w-full py-2.5 border-2 border-[#00355f] text-[#00355f] hover:bg-[#00355f] hover:text-white font-semibold rounded-lg transition-all">
+        Save Bulk Upload
+      </button>
+    </div>
+  </div>
+</section>
           {/* Section 2: Transaction List & Stats */}
           <section className="col-span-12 xl:col-span-8 space-y-6">
             
@@ -196,29 +280,42 @@ export default function TransactionsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead className="bg-[#f2f4f6] border-b border-[#c2c7d1]">
-                    <tr>
-                      <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-[#505f76]">Date</th>
-                      <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-[#505f76] text-center">Type</th>
-                      <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-[#505f76]">Dept</th>
-                      <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-[#505f76]">Category</th>
-                      <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-[#505f76] text-right">Amount</th>
-                      <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-[#505f76]">Description</th>
-                      <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-[#505f76] text-center">Action</th>
-                    </tr>
+                   <tr className="bg-[#f7f9fb] border-b border-[#c2c7d1]">
+              <th className="p-3 text-xs">Date</th>
+              <th className="p-3 text-xs">Department</th>
+    
+              <th className="p-3 text-xs">Unit</th>
+              <th className="p-3 text-xs">Item</th>
+              <th className="p-3 text-xs">Description</th>
+              <th className="p-3 text-xs text-right">Pay Out</th>
+              <th className="p-3 text-xs text-right">VAT</th>
+              <th className="p-3 text-xs text-right">Without VAT</th>
+              <th className="p-3 text-xs text-right">Delivery</th>
+              <th className="p-3 text-xs text-right">Balance</th>
+              <th className="p-3 text-xs text-center">Status</th>
+            </tr>
                   </thead>
                   <tbody className="divide-y divide-[#c2c7d1]/50">
                     {filteredTransactions.map((t) => (
                       <tr key={t.id} className="hover:bg-[#F0F7FF] transition-colors group">
-                        <td className="px-4 py-3 text-[12px] font-mono text-[#191c1e] whitespace-nowrap">{t.date}</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${t.type === 'Income' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                            {t.type}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-[13px] text-[#191c1e]">{t.department}</td>
-                        <td className="px-4 py-3 text-[13px] text-[#727780]">{t.category}</td>
-                        <td className="px-4 py-3 text-[12px] font-mono text-right font-semibold text-[#191c1e]">${t.amount.toFixed(2)}</td>
-                        <td className="px-4 py-3 text-[13px] text-[#191c1e] max-w-[200px] truncate">{t.description}</td>
+                        <td className="p-3">{t.date}</td>
+
+                  <td className="p-3 font-semibold text-[#00355f]">
+                    {t.department}
+                  </td>
+                  <td className="p-3">{t.unit}</td>
+                  <td className="p-3">{t.item}</td>
+                  <td className="p-3">{t.description}</td>
+                  <td className="p-3 text-right text-red-600 font-bold">
+                    {t.payOut}
+                  </td>
+
+                  <td className="p-3 text-right">{t.VAT}</td>
+                  <td className="p-3 text-right">{t.withoutVAT}</td>
+                  <td className="p-3 text-right">{t.deliveryFee}</td>
+                  <td className="p-3 text-right font-semibold">
+                    {t.balance}
+                  </td>
                         <td className="px-4 py-3 text-center">
                           <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button className="p-1 text-[#727780] hover:text-[#00355f] transition-colors"><Edit2 size={16} /></button>
