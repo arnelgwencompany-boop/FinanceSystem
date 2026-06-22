@@ -79,7 +79,7 @@ export default function TransactionTable({ transactions, onDelete, onEdit }: Pro
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 mb-6">
       {/* Toolbar */}
       <div className="bg-white border border-[#c2c7d1] rounded-xl shadow-sm p-3 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[180px]">

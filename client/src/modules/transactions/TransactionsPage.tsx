@@ -90,8 +90,6 @@ export default function TransactionsPage() {
 
         <PageHeader transactions={transactions} />
 
-        <StatCards transactions={transactions} income={income} />
-
         <div className="grid grid-cols-12 gap-6 items-start">
           {/* Left: Form */}
           <div className="col-span-12 xl:col-span-4">
@@ -112,6 +110,7 @@ export default function TransactionsPage() {
               onDelete={handleDelete}
               onEdit={setEditTarget}
             />
+             <StatCards transactions={transactions} income={income} />
           </div>
         </div>
 
