@@ -29,13 +29,13 @@ export default function TransactionsPage() {
       department: "GA",
       unit: "0",
       item: "1",
-      date: "1/25/2024",
-      description: "AWEI headphone set(20 pcs)",
-      payOut: 2748.9,
+      date: "1/25/2026",
+      description: "headphone set(500 pcs)",
+      payOut: 3000.9,
       VAT: 252.4,
       withoutVAT: 2102.5,
       deliveryFee: 394,
-      balance: 97251.10,
+      balance: 97000.10,
       status: "Completed",
     },
     {
@@ -43,30 +43,15 @@ export default function TransactionsPage() {
       department: "GO",
       unit: "0",
       item: "2",
-      date: "1/11/2024",
-      description: "Humidity Temperature(2 pcs)",
-      payOut: 236.5,
+      date: "1/11/2026",
+      description: "Humidity Temperature",
+      payOut: 2000.5,
       VAT: 0,
       withoutVAT: 178,
       deliveryFee: 58.5,
-      balance: 97014.6,
+      balance: 95000.6,
       status: "Completed",
     },
-    {
-      id: 3,
-      department: "IE",
-      unit: "0",
-      item: "3",
-      date: "3/25/2024",
-      description: "mouse pad(20 pcs)",
-      payOut: 236.5,
-      VAT: 0,
-      withoutVAT: 178,
-      deliveryFee: 58.5,
-      balance: 97014.6,
-      status: "Completed",
-    },
-     
   ]);
  // ===================================================
   const [form, setForm] = useState({
@@ -83,6 +68,7 @@ export default function TransactionsPage() {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [income, setIncome] = useState(0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -168,86 +154,98 @@ const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         {/* Bento Layout Content */}
         <div className="grid grid-cols-12 gap-6 items-start">
-          
          <section className="col-span-12 xl:col-span-4 bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
-  {/* Header */}
-  <div className="flex items-center gap-3 mb-8">
-    <div className="p-2 bg-[#00355f]/10 rounded-lg">
-      <PlusCircle className="text-[#00355f]" size={24} />
-    </div>
-    <h3 className="text-xl font-bold text-[#00355f] tracking-tight">Add New Transaction</h3>
-  </div>
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-8">
+              <div className="flex flex-col gap-1">
+            <label className="text-[11px] font-bold uppercase tracking-wide text-[#727780]">
+              Set Total Income
+            </label>
+            <input
+              type="number"
+              value={income}
+              onChange={(e) => setIncome(Number(e.target.value))}
+              className="border rounded px-2 py-1"
+              placeholder="Enter total income"
+            />
+            <button className="px-3 py-1 bg-[#00355f] text-white rounded text-sm mt-2" onClick={() => alert(`Total income set to $${income}`)}>
+              Save Income
+            </button>
+          </div>
 
-  <form onSubmit={handleSubmit} className="space-y-5">
-    {/* DATE + DEPARTMENT */}
-    <div className="grid grid-cols-2 gap-4">
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</label>
-        <input required type="date" name="date" value={form.date} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" />
-      </div>
+              <div className="p-2 bg-[#00355f]/10 rounded-lg">
+                <PlusCircle className="text-[#00355f]" size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-[#00355f] tracking-tight">Add New Transaction</h3>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* DATE + DEPARTMENT */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</label>
+                  <input required type="date" name="date" value={form.date} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" />
+                </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Department</label>
-        <select required name="department" value={form.department} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all">
-          <option value="">Select Dept</option>
-          <option value="IT Ops">IT Ops</option>
-          <option value="Marketing">Marketing</option>
-          <option value="Sales">Sales</option>
-          <option value="Executive">Executive</option>
-        </select>
-      </div>
-    </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Department</label>
+                  <select required name="department" value={form.department} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all">
+                    <option value="">Select Dept</option>
+                    <option value="IT Ops">IT Ops</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Executive">Executive</option>
+                  </select>
+                </div>
+              </div>
 
-    {/* UNIT + ITEM */}
-    <div className="grid grid-cols-2 gap-4">
-      <input name="unit" placeholder="Unit" value={form.unit} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" />
-      <input name="item" placeholder="Item" value={form.item} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" />
-    </div>
+              {/* UNIT + ITEM */}
+              <div className="grid grid-cols-2 gap-4">
+                <input name="unit" placeholder="Unit" value={form.unit} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" />
+                <input name="item" placeholder="Item" value={form.item} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" />
+              </div>
 
-    {/* DESCRIPTION */}
-    <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all h-24 resize-none" />
+              {/* DESCRIPTION */}
+              <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all h-24 resize-none" />
 
-  {/* FINANCIALS */}
-<div className="grid grid-cols-2 gap-4">
-  {['payOut', 'VAT', 'withoutVAT', 'deliveryFee'].map((field) => (
-    <input 
-      key={field} 
-      type="number" 
-      name={field} 
-      placeholder={field.replace(/([A-Z])/g, ' $1').trim()} 
-      // Add 'as keyof typeof form' here to satisfy TypeScript
-      value={form[field as keyof typeof form]}
-      onChange={handleChange} 
-      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" 
-    />
-  ))}
-  <input 
-    type="number" 
-    name="balance" 
-    placeholder="Balance" 
-    value={form.balance} 
-    onChange={handleChange} 
-    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all col-span-2" 
-  />
-</div>
-
-    {/* SUBMIT */}
-    <button type="submit" className="w-full py-3 bg-[#00355f] hover:bg-[#002542] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98]">
-      Save Transaction
-    </button>
-  </form>
-
-  {/* BULK UPLOAD SECTION */}
-  <div className="mt-8 pt-8 border-t border-slate-100">
-    <label className="block text-sm font-semibold text-slate-700 mb-3">Bulk Import CSV / Excel</label>
-    <div className="space-y-3">
-      <input type="file" accept=".csv, .xlsx" onChange={handleFileUpload} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#00355f]/10 file:text-[#00355f] hover:file:bg-[#00355f]/20 cursor-pointer" />
-      <button type="button" className="w-full py-2.5 border-2 border-[#00355f] text-[#00355f] hover:bg-[#00355f] hover:text-white font-semibold rounded-lg transition-all">
-        Save Bulk Upload
-      </button>
-    </div>
-  </div>
-</section>
+            {/* FINANCIALS */}
+          <div className="grid grid-cols-2 gap-4">
+            {['payOut', 'VAT', 'withoutVAT', 'deliveryFee'].map((field) => (
+              <input 
+                key={field} 
+                type="number" 
+                name={field} 
+                placeholder={field.replace(/([A-Z])/g, ' $1').trim()} 
+                // Add 'as keyof typeof form' here to satisfy TypeScript
+                value={form[field as keyof typeof form]}
+                onChange={handleChange} 
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all" 
+              />
+            ))}
+            <input 
+              type="number" 
+              name="balance" 
+              placeholder="Balance" 
+              value={form.balance} 
+              onChange={handleChange} 
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00355f]/20 focus:border-[#00355f] outline-none transition-all col-span-2" 
+            />
+          </div>
+              {/* SUBMIT */}
+              <button type="submit" className="w-full py-3 bg-[#00355f] hover:bg-[#002542] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98]">
+                Save Transaction
+              </button>
+            </form>
+            {/* BULK UPLOAD SECTION */}
+            <div className="mt-8 pt-8 border-t border-slate-100">
+              <label className="block text-sm font-semibold text-slate-700 mb-3">Bulk Import CSV / Excel</label>
+              <div className="space-y-3">
+                <input type="file" accept=".csv, .xlsx" onChange={handleFileUpload} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#00355f]/10 file:text-[#00355f] hover:file:bg-[#00355f]/20 cursor-pointer" />
+                <button type="button" className="w-full py-2.5 border-2 border-[#00355f] text-[#00355f] hover:bg-[#00355f] hover:text-white font-semibold rounded-lg transition-all">
+                  Save Bulk Upload
+                </button>
+              </div>
+            </div>
+          </section>
           {/* Section 2: Transaction List & Stats */}
           <section className="col-span-12 xl:col-span-8 space-y-6">
             
