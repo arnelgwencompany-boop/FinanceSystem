@@ -24,7 +24,7 @@ export default function Sidebar() {
       
       {/* Logo / Title */}
       <div className="px-4 mb-8">
-        <h1 className="text-[16px] font-bold text-white tracking-tight">Asset Ledger</h1>
+        <h1 className="text-[16px] font-bold text-white tracking-tight">Petty Cash System</h1>
         <p className="text-[10px] text-white/60 font-bold tracking-widest uppercase mt-1">IT Finance Management</p>
       </div>
 
