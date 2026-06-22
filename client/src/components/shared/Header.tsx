@@ -10,7 +10,7 @@ export default function Header() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#727780]" />
           <input 
             type="text" 
-            placeholder="Search ledger, assets, or users..." 
+            placeholder="Search..." 
             className="h-9 w-64 pl-10 pr-4 bg-[#ffffff] border border-[#c2c7d1] rounded-lg text-[13px] focus:ring-1 focus:ring-[#00355f] focus:border-[#00355f] outline-none transition-all"
           />
         </div>
@@ -40,7 +40,7 @@ export default function Header() {
         <div className="flex items-center gap-2 cursor-pointer hover:bg-[#e0e3e5] p-1 rounded-lg transition-colors">
           <div className="text-right hidden sm:block">
             <p className="text-[13px] font-bold text-[#00355f]">Arnel Gwen</p>
-            <p className="text-[10px] text-[#505f76] font-bold uppercase tracking-wider">FinOps Lead</p>
+            <p className="text-[10px] text-[#505f76] font-bold uppercase tracking-wider">IT-Programmer</p>
           </div>
           
           {/* User Icon Badge */}

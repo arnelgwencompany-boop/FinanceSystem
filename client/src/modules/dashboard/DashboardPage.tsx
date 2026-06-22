@@ -1,5 +1,4 @@
 import { 
-  Download, 
   Plus, 
   Banknote, 
   ShoppingCart, 
@@ -8,42 +7,62 @@ import {
   List, 
   Filter, 
   MoreVertical, 
-  Monitor, 
-  Cloud, 
-  Printer, 
-   Wallet,
-  Laptop, 
-  Edit,
-  Info
 } from "lucide-react";
 
 export default function DashboardPage() {
   // Mock Data mapped for the UI
   const summary = {
-    income: "142,500.00",
-    expenses: "89,240.50",
-    balance: "4,120.00",
+    income: "100,000.00",
+    expenses: "42,415.00",
+    balance: "57,585.00",
   };
 
   const transactions = [
     {
       id: 1,
-      department: "",
-      type: "Asset Purchase",
-      icon: Printer,
-      unit: "Office Printer",
-      item: "",
-      date: "",
-      description: "HP LaserJet Pro M404dn",
-      income: "",
-      payOut: "$1,200.00",
-      VAT: "",
-      withoutVAT: "",
-      deliveryFee: "",
-      balance: "",
+      department: "GA",
+      unit: "0",
+      item: "1",
+      date: "1/25/2024",
+      description: "AWEI headphone set(20 pcs)",
+      payOut: "2748.9",
+      VAT: "252.4",
+      withoutVAT: "2102.5",
+      deliveryFee: "394",
+      balance: "97251.10",
       status: "Completed",
       statusStyle: "bg-green-100 text-green-700 border-green-200",
-    }
+    },
+    {
+      id: 2,
+      department: "GO",
+      unit: "0",
+      item: "2",
+      date: "1/11/2024",
+      description: "Humidity Temperature(2 pcs)",
+      payOut: "236.5",
+      VAT: "0",
+      withoutVAT: "178",
+      deliveryFee: "58.5",
+      balance: "97014.6",
+      status: "Completed",
+      statusStyle: "bg-green-100 text-green-700 border-green-200",
+    },
+    {
+      id: 3,
+      department: "IE",
+      unit: "0",
+      item: "3",
+      date: "3/25/2024",
+      description: "mouse pad(20 pcs)",
+      payOut: "236.5",
+      VAT: "0",
+      withoutVAT: "178",
+      deliveryFee: "58.5",
+      balance: "97014.6",
+      status: "Completed",
+      statusStyle: "bg-green-100 text-green-700 border-green-200",
+    },
   ];
 
   return (
@@ -58,10 +77,6 @@ export default function DashboardPage() {
             <p className="text-[#505f76] text-[14px] mt-1">Real-time tracking of IT operational expenditures and hardware assets.</p>
           </div>
           <div className="flex gap-2">
-            <button className="flex items-center gap-1 px-6 py-2 bg-white border border-[#727780] text-[#00355f] font-bold rounded-lg hover:bg-[#f2f4f6] transition-all active:scale-95 text-[11px] uppercase tracking-wider">
-              <Download size={16} />
-              Export
-            </button>
             <button className="flex items-center gap-1 px-6 py-2 bg-[#0f4c81] text-[#8ebdf9] font-bold rounded-lg hover:opacity-90 shadow-sm transition-all active:scale-95 text-[11px] uppercase tracking-wider">
               <Plus size={16} />
               New Transaction
@@ -80,7 +95,7 @@ export default function DashboardPage() {
               <span className="text-[10px] font-bold text-[#6f3800] bg-[#ffdcc4] px-2 py-0.5 rounded-full">+12.4%</span>
             </div>
             <p className="text-[11px] font-bold text-[#505f76] mb-1 uppercase tracking-wider">Total Income</p>
-            <h3 className="text-[20px] font-extrabold text-[#191c1e]">${summary.income}</h3>
+            <h3 className="text-[20px] font-extrabold text-[#191c1e]">{summary.income}</h3>
             <div className="mt-4 w-full h-1 bg-[#eceef0] rounded-full overflow-hidden">
               <div className="h-full bg-[#0f4c81] w-[75%]"></div>
             </div>
@@ -94,7 +109,7 @@ export default function DashboardPage() {
               <span className="text-[10px] font-bold text-[#93000a] bg-[#ffdad6] px-2 py-0.5 rounded-full">+4.1%</span>
             </div>
             <p className="text-[11px] font-bold text-[#505f76] mb-1 uppercase tracking-wider">Total Expenses</p>
-            <h3 className="text-[20px] font-extrabold text-[#191c1e]">${summary.expenses}</h3>
+            <h3 className="text-[20px] font-extrabold text-[#191c1e]">{summary.expenses}</h3>
             <div className="mt-4 w-full h-1 bg-[#eceef0] rounded-full overflow-hidden">
               <div className="h-full bg-[#ba1a1a] w-[60%]"></div>
             </div>
@@ -107,8 +122,8 @@ export default function DashboardPage() {
               </div>
               <span className="text-[10px] font-bold text-[#38485d] bg-[#d3e4fe] px-2 py-0.5 rounded-full">Stable</span>
             </div>
-            <p className="text-[11px] font-bold text-[#505f76] mb-1 uppercase tracking-wider">Petty Cash Balance</p>
-            <h3 className="text-[20px] font-extrabold text-[#191c1e]">${summary.balance}</h3>
+            <p className="text-[11px] font-bold text-[#505f76] mb-1 uppercase tracking-wider">Total Balance</p>
+            <h3 className="text-[20px] font-extrabold text-[#191c1e]">{summary.balance}</h3>
             <div className="mt-4 w-full h-1 bg-[#eceef0] rounded-full overflow-hidden">
               <div className="h-full bg-[#07497d] w-[90%]"></div>
             </div>
@@ -150,24 +165,20 @@ export default function DashboardPage() {
             <tr className="bg-[#f7f9fb] border-b border-[#c2c7d1]">
               <th className="p-3 text-xs">Date</th>
               <th className="p-3 text-xs">Department</th>
-              <th className="p-3 text-xs">Type</th>
+    
               <th className="p-3 text-xs">Unit</th>
               <th className="p-3 text-xs">Item</th>
               <th className="p-3 text-xs">Description</th>
-              <th className="p-3 text-xs text-right">Income</th>
               <th className="p-3 text-xs text-right">Pay Out</th>
               <th className="p-3 text-xs text-right">VAT</th>
               <th className="p-3 text-xs text-right">Without VAT</th>
               <th className="p-3 text-xs text-right">Delivery</th>
               <th className="p-3 text-xs text-right">Balance</th>
               <th className="p-3 text-xs text-center">Status</th>
-              <th className="p-3 text-xs"></th>
             </tr>
           </thead>
                <tbody>
             {transactions.map((t) => {
-              const Icon = t.icon;
-
               return (
                 <tr
                   key={t.id}
@@ -178,22 +189,9 @@ export default function DashboardPage() {
                   <td className="p-3 font-semibold text-[#00355f]">
                     {t.department}
                   </td>
-
-                  <td className="p-3">
-                    <div className="flex items-center gap-1">
-                      {Icon && <Icon size={16} />}
-                      {t.type}
-                    </div>
-                  </td>
-
                   <td className="p-3">{t.unit}</td>
                   <td className="p-3">{t.item}</td>
                   <td className="p-3">{t.description}</td>
-
-                  <td className="p-3 text-right text-green-600">
-                    {t.income}
-                  </td>
-
                   <td className="p-3 text-right text-red-600 font-bold">
                     {t.payOut}
                   </td>
@@ -211,12 +209,6 @@ export default function DashboardPage() {
                     >
                       {t.status}
                     </span>
-                  </td>
-
-                  <td className="p-3 text-right">
-                    <button className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-blue-700">
-                      ✏️
-                    </button>
                   </td>
                 </tr>
               );
@@ -248,7 +240,7 @@ export default function DashboardPage() {
             <div className="space-y-4">
               <div className="space-y-1">
                 <div className="flex justify-between text-[13px] font-bold text-[#191c1e]">
-                  <span>Engineering</span>
+                  <span>GA</span>
                   <span>$42,800</span>
                 </div>
                 <div className="w-full h-2 bg-[#eceef0] rounded-full">
@@ -257,7 +249,7 @@ export default function DashboardPage() {
               </div>
               <div className="space-y-1">
                 <div className="flex justify-between text-[13px] font-bold text-[#191c1e]">
-                  <span>Marketing</span>
+                  <span>GO</span>
                   <span>$18,400</span>
                 </div>
                 <div className="w-full h-2 bg-[#eceef0] rounded-full">
@@ -266,7 +258,7 @@ export default function DashboardPage() {
               </div>
               <div className="space-y-1">
                 <div className="flex justify-between text-[13px] font-bold text-[#191c1e]">
-                  <span>Operations</span>
+                  <span>IE</span>
                   <span>$12,100</span>
                 </div>
                 <div className="w-full h-2 bg-[#eceef0] rounded-full">
@@ -275,21 +267,6 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-
-          <div className="bg-[#00355f] text-white p-6 rounded-xl shadow-lg relative overflow-hidden flex flex-col justify-between">
-            <div className="absolute -right-12 -top-12 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
-            <div className="relative z-10">
-              <Info size={32} className="mb-4 text-white" />
-              <h4 className="text-[16px] font-semibold mb-2">Audit Due Soon</h4>
-              <p className="text-white/80 text-[14px] leading-relaxed">
-                Your Q4 Fixed Asset Audit is scheduled for November 15th. Please ensure all newly added assets are tagged.
-              </p>
-            </div>
-            <button className="w-full py-2 mt-8 bg-white text-[#00355f] font-bold rounded-lg hover:bg-[#a0c9ff] transition-colors relative z-10">
-              Start Preparation
-            </button>
-          </div>
-
         </div>
 
       </main>
