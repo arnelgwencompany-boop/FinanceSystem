@@ -13,10 +13,10 @@ import logo from "../../../public/logo.png";
 
 const menuItems = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+   { name: "Request", path: "/request", icon: FilePlus },
+   { name: "Approvals", path: "/approvals", icon: CheckCircle },
   { name: "Transactions", path: "/transactions", icon: ArrowLeftRight },
-  { name: "Request", path: "/request", icon: FilePlus },
   { name: "Reports", path: "/reports", icon: FileText },
-  { name: "Approvals", path: "/approvals", icon: CheckCircle },
   { name: "Notifications", path: "/notifications", icon: Bell },
   { name: "Settings", path: "/settings", icon: Settings },
 ];
