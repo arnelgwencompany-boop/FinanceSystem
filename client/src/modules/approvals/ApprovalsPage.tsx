@@ -1,91 +1,69 @@
-// src/pages/Approvals.tsx
-import React, { useState } from 'react';
+import { useState } from "react";
+import ApprovalsHeader from "../../components/aprovals/ApprovalHeader";
+import ApprovalsTable from "../../components/aprovals/ApprovalTable";
+import ApprovalDetailPanel from "../../components/aprovals/Approvaldetalpanel";
+import { MOCK_APPROVALS } from "../../data/approvalData";
+import type { ApprovalTransaction } from "../../types/approvals";
 
-type Transaction = {
-  id: number;
-  date: string;
-  description: string;
-  amount: number;
-  category: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
-};
+export default function ApprovalsPage() {
+  const [transactions, setTransactions] = useState<ApprovalTransaction[]>(MOCK_APPROVALS);
 
-const initialData: Transaction[] = [
-  { id: 1, date: '2026-06-01', description: 'Office Supplies', amount: 500, category: 'Supplies', status: 'Pending' },
-  { id: 2, date: '2026-06-03', description: 'Snacks', amount: 300, category: 'Food', status: 'Pending' },
-  { id: 3, date: '2026-06-05', description: 'Transport', amount: 200, category: 'Travel', status: 'Approved' },
-];
+  // The selected transaction object (not just id)
+  const [selected, setSelected] = useState<ApprovalTransaction | null>(null);
 
-const Approvals: React.FC = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialData);
-
-  const handleApprove = (id: number) => {
+  // Approve or reject — updates list + refreshes the panel if it's open
+  const updateStatus = (id: number, status: "Approved" | "Rejected") => {
     setTransactions((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, status: 'Approved' } : item
-      )
+      prev.map((t) => (t.id === id ? { ...t, status } : t))
+    );
+    // Keep the panel in sync with the updated status
+    setSelected((prev) =>
+      prev?.id === id ? { ...prev, status } : prev
     );
   };
 
-  const handleReject = (id: number) => {
+  // Remarks update
+  const updateRemarks = (id: number, remarks: string) => {
     setTransactions((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, status: 'Rejected' } : item
-      )
+      prev.map((t) => (t.id === id ? { ...t, remarks } : t))
+    );
+    setSelected((prev) =>
+      prev?.id === id ? { ...prev, remarks } : prev
     );
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Approvals</h2>
+    <main className="ml-[240px] mt-16 p-6 md:p-8 min-h-[calc(100vh-64px)] bg-[#f7f9fb]">
+      <div className="max-w-[1440px] mx-auto space-y-6">
 
-      <table border={1} cellPadding={8} width="100%">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+        {/* Header + stats */}
+        <ApprovalsHeader transactions={transactions} />
 
-        <tbody>
-          {transactions.map((item) => (
-            <tr key={item.id}>
-              <td>{item.date}</td>
-              <td>{item.description}</td>
-              <td>{item.category}</td>
-              <td>₱{item.amount}</td>
-              <td>{item.status}</td>
+        {/* Split layout: table left, detail panel right */}
+        <div className={`grid gap-6 ${selected ? "grid-cols-1 xl:grid-cols-[1fr_480px]" : "grid-cols-1"}`}>
 
-              <td>
-                {item.status === 'Pending' ? (
-                  <>
-                    <button
-                      onClick={() => handleApprove(item.id)}
-                      style={{ marginRight: '5px' }}
-                    >
-                      Approve
-                    </button>
+          {/* Queue table */}
+          <ApprovalsTable
+            transactions={transactions}
+            onSelect={setSelected}           // passes full ApprovalTransaction object
+            selectedId={selected?.id ?? null}
+            onApprove={(id) => updateStatus(id, "Approved")}
+            onReject={(id) => updateStatus(id, "Rejected")}
+          />
 
-                    <button
-                      onClick={() => handleReject(item.id)}
-                    >
-                      Reject
-                    </button>
-                  </>
-                ) : (
-                  <span>No actions</span>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          {/* Detail panel — only renders when a row is selected */}
+          {selected && (
+            <ApprovalDetailPanel
+              transaction={selected}
+              onClose={() => setSelected(null)}
+              onApprove={(id) => updateStatus(id, "Approved")}
+              onReject={(id) => updateStatus(id, "Rejected")}
+              onRemarksChange={updateRemarks}
+            />
+          )}
+        </div>
+
+      </div>
+    </main>
   );
-};
-
-export default Approvals;
+}
