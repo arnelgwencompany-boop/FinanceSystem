@@ -681,7 +681,7 @@ const Settings: React.FC = () => {
   return (
     /* Offset for fixed sidebar (240px) and fixed header (64px) */
     <div className="ml-[240px] pt-16 min-h-screen bg-[#f7f9fb]">
-      <div className="p-8 max-w-[1200px] mx-auto">
+      <div className="p-8 max-w-[1740px] mx-auto">
 
         {/* Page heading */}
         <div className="mb-8">

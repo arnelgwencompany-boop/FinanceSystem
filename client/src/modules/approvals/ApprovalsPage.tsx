@@ -34,7 +34,7 @@ export default function ApprovalsPage() {
 
   return (
     <main className="ml-[240px] mt-16 p-6 md:p-8 min-h-[calc(100vh-64px)] bg-[#f7f9fb]">
-      <div className="max-w-[1440px] mx-auto space-y-6">
+      <div className="max-w-[1740px] mx-auto space-y-6">
 
         {/* Header + stats */}
         <ApprovalsHeader transactions={transactions} />
