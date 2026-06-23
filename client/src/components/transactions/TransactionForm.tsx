@@ -83,7 +83,7 @@ export default function TransactionForm({
         </div>
         <div>
           <h3 className="text-base font-bold text-[#00355f]">Add Transaction</h3>
-          <p className="text-[11px] text-[#727780]">Fill in details and save.</p>
+          <p className="text-[11px] text-[#727780]">Fill in details and save, this use for existing transactions.</p>
         </div>
       </div>
 
