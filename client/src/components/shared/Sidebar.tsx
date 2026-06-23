@@ -6,12 +6,14 @@ import {
   CheckCircle,
   Bell,
   Settings,
-  Wallet // Added for the footer section
+  Wallet, 
+  FilePlus
 } from "lucide-react";
 
 const menuItems = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { name: "Transactions", path: "/transactions", icon: ArrowLeftRight },
+  { name: "Request", path: "/request", icon: FilePlus },
   { name: "Reports", path: "/reports", icon: FileText },
   { name: "Approvals", path: "/approvals", icon: CheckCircle },
   { name: "Notifications", path: "/notifications", icon: Bell },

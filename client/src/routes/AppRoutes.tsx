@@ -3,6 +3,7 @@ import MainLayout from "../components/layout/MainLayout";
 import LoginPage from "../modules/auth/LoginPage";
 import DashboardPage from "../modules/dashboard/DashboardPage";
 import TransactionsPage from "../modules/transactions/TransactionsPage";
+import RequestPage from "../modules/requests/RequestPage";
 import ApprovalsPage from "../modules/approvals/ApprovalsPage";
 import ReportsPage from "../modules/reports/ReportsPage";
 import NotificationsPage from "../modules/notifications/NotificationsPage";
@@ -19,6 +20,7 @@ export default function AppRoutes() {
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
+          <Route path="/request" element={<RequestPage />} />
           <Route path="/approvals" element={<ApprovalsPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />

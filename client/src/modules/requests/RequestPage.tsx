@@ -114,7 +114,7 @@ export default function RequestPage() {
               onSelectAll={handleSelectAll}
               onClearAll={handleClearAll}
             />
-            <RequestDetailsForm form={form} onChange={setForm} />
+            {/* <RequestDetailsForm form={form} onChange={setForm} /> */}
           </div>
 
           {/* RIGHT — printable preview */}
