@@ -1,10 +1,11 @@
 from django.db import models
+from django.conf import settings 
 
 # Create your models here.
 class Request(models.Model):
     request_no = models.CharField(max_length=50, unique=True)
 
-    requested_by = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     department = models.CharField(max_length=100)
 
     date = models.DateField()
