@@ -7,6 +7,7 @@ import {
   Bell,
   Settings,
   FilePlus,
+  Users,
   ChevronRight,
 } from "lucide-react";
 import logo from "../../../public/logo.png";
@@ -18,6 +19,7 @@ const menuItems = [
   { name: "Transactions", path: "/transactions", icon: ArrowLeftRight },
   { name: "Reports", path: "/reports", icon: FileText },
   { name: "Notifications", path: "/notifications", icon: Bell },
+  { name: "User Management", path: "/users", icon: Users },
   { name: "Settings", path: "/settings", icon: Settings },
 ];
 

@@ -7,6 +7,7 @@ import RequestPage from "../modules/requests/RequestPage";
 import ApprovalsPage from "../modules/approvals/ApprovalsPage";
 import ReportsPage from "../modules/reports/ReportsPage";
 import NotificationsPage from "../modules/notifications/NotificationsPage";
+import UserManagement from "../modules/users/UserPage";
 import SettingsPage from "../modules/settings/SettingsPgae";
 
 export default function AppRoutes() {
@@ -24,6 +25,7 @@ export default function AppRoutes() {
           <Route path="/approvals" element={<ApprovalsPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/users" element={<UserManagement />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
       </Routes>
