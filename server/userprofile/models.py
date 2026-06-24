@@ -11,3 +11,6 @@ class UserProfile(models.Model):
         ('finance', 'Finance'),
         ('admin', 'Admin'),
     ])
+
+    employee_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    department = models.CharField(max_length=100, null=True, blank=True)
