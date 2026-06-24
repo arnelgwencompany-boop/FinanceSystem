@@ -1,216 +1,346 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  Landmark, 
-  User, 
-  Lock, 
-  ArrowRight, 
-  Loader2, 
-  CheckCircle2 
+import {
+  User, Lock, ArrowRight, Loader2, CheckCircle2, Eye, EyeOff, ShieldCheck,
 } from "lucide-react";
+import logo from "../../../public/logo.png";
+
+type Role = "employee" | "supervisor" | "director" | "finance" | "admin";
+
+const ROLE_LABELS: Record<Role, string> = {
+  employee:   "Employee",
+  supervisor: "Supervisor",
+  director:   "Director",
+  finance:    "Finance",
+  admin:      "Admin",
+};
 
 export default function LoginPage() {
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
-  const [progressWidth, setProgressWidth] = useState(33);
+  const [username,  setUsername]  = useState("");
+  const [password,  setPassword]  = useState("");
+  const [role,      setRole]      = useState<Role>("employee");
+  const [remember,  setRemember]  = useState(false);
+  const [showPwd,   setShowPwd]   = useState(false);
+  const [error,     setError]     = useState("");
+  const [status,    setStatus]    = useState<"idle" | "loading" | "success">("idle");
+  const [tick,      setTick]      = useState(0);
 
-  // Subtle pulse on progress bar for "system health" feel
+  // Animated dots on the decorative border
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgressWidth((prev) => (prev === 33 ? 38 : 33));
-    }, 3000);
-    return () => clearInterval(interval);
+    const id = setInterval(() => setTick((t) => t + 1), 1200);
+    return () => clearInterval(id);
   }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!username || !password) {
-      alert("Please enter username and password");
+    setError("");
+    if (!username.trim() || !password.trim()) {
+      setError("Please enter your username and password.");
       return;
     }
-
     setStatus("loading");
-
-    // Simulate login and success states
     setTimeout(() => {
       setStatus("success");
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
+      setTimeout(() => navigate("/dashboard"), 1000);
     }, 1500);
   };
 
+  // Corner marker component
+  const Corner = ({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) => {
+    const base = "absolute w-5 h-5";
+    const positions: Record<string, string> = {
+      tl: "-top-[2px] -left-[2px]",
+      tr: "-top-[2px] -right-[2px]",
+      bl: "-bottom-[2px] -left-[2px]",
+      br: "-bottom-[2px] -right-[2px]",
+    };
+    const borders: Record<string, string> = {
+      tl: "border-t-2 border-l-2",
+      tr: "border-t-2 border-r-2",
+      bl: "border-b-2 border-l-2",
+      br: "border-b-2 border-r-2",
+    };
+    return <div className={`${base} ${positions[pos]} ${borders[pos]} border-[#60a5fa]`} />;
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-[#191c1e] font-sans">
-      
-      {/* Subtle Background Ambient Movement */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-20 z-0">
-        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full blur-[120px] bg-[#a0c9ff]"></div>
-        <div className="absolute top-[60%] -right-[5%] w-[35%] h-[35%] rounded-full blur-[100px] bg-[#d3e4fe]"></div>
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        background: "linear-gradient(160deg, #001f3f 0%, #00355f 45%, #0a1f3c 100%)",
+      }}
+    >
+      {/* Background grid overlay */}
+      <div
+        className="fixed inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
+
+      {/* Ambient glows */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full blur-[120px]"
+          style={{ backgroundColor: "rgba(37,99,235,0.25)" }} />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full blur-[120px]"
+          style={{ backgroundColor: "rgba(96,165,250,0.15)" }} />
       </div>
 
-      {/* Main Content Area */}
-      <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 relative z-10">
-        <div className="w-full max-w-[400px]">
-          
-          {/* Minimal Branding Anchor */}
-          <div className="flex flex-col items-center mb-8 text-center">
-            <div className="w-12 h-12 bg-[#00355f] rounded-lg flex items-center justify-center mb-4 text-white shadow-sm">
-              <Landmark size={28} strokeWidth={1.5} />
-            </div>
-            <h1 className="text-[24px] leading-[32px] font-semibold tracking-[-0.02em] text-[#00355f]">
-              Asset Ledger
-            </h1>
-            <p className="text-[13px] text-[#505f76] mt-1">
-              Enterprise Asset & Financial Management
-            </p>
-          </div>
+      {/* ── CARD ─────────────────────────────────────────────────────────── */}
+      <div className="relative w-full max-w-[440px]">
 
-          {/* Transactional Card */}
-          <div className="bg-white border border-[#E2E8F0] p-8 rounded-xl shadow-sm">
+        {/* Outer border frame with animated corners */}
+        <div className="relative p-[1px] rounded-2xl"
+          style={{ background: "linear-gradient(135deg, rgba(96,165,250,0.4), rgba(255,255,255,0.08), rgba(96,165,250,0.2))" }}>
+
+          <Corner pos="tl" />
+          <Corner pos="tr" />
+          <Corner pos="bl" />
+          <Corner pos="br" />
+
+          {/* Animated scan line */}
+          <div
+            className="absolute left-0 right-0 h-[1px] pointer-events-none"
+            style={{
+              top: `${20 + (tick % 5) * 15}%`,
+              background: "linear-gradient(90deg, transparent, rgba(96,165,250,0.3), transparent)",
+              transition: "top 1.2s ease-in-out",
+            }}
+          />
+
+          {/* Inner card */}
+          <div
+            className="rounded-2xl px-8 py-10 relative overflow-hidden"
+            style={{ backgroundColor: "rgba(5,20,40,0.92)", backdropFilter: "blur(20px)" }}
+          >
+
+            {/* ── Header ─────────────────────────────────────────────────── */}
+            <div className="flex flex-col items-center mb-8 text-center">
+              {/* Logo */}
+              <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 overflow-hidden"
+                style={{
+                  backgroundColor: "#ffffff",
+                  boxShadow: "0 0 0 1px rgba(96,165,250,0.3), 0 8px 24px rgba(0,0,0,0.4)",
+                }}
+              >
+                <img
+                  src={logo}
+                  alt="Petty Cash System"
+                  className="w-12 h-12 object-contain"
+                  onError={(e) => {
+                    const t = e.currentTarget as HTMLImageElement;
+                    t.style.display = "none";
+                    const p = t.parentElement;
+                    if (p) p.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00355f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`;
+                  }}
+                />
+              </div>
+
+              <h1
+                className="text-[22px] font-extrabold leading-tight tracking-tight"
+                style={{ color: "#ffffff" }}
+              >
+                Petty Cash System
+              </h1>
+              <p className="text-[12px] font-semibold tracking-[0.18em] uppercase mt-1.5"
+                style={{ color: "#60a5fa" }}>
+                IT Finance Management
+              </p>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 mt-5 w-full">
+                <div className="flex-1 h-px" style={{ background: "rgba(96,165,250,0.2)" }} />
+                <span className="text-[10px] font-bold tracking-widest uppercase"
+                  style={{ color: "rgba(148,163,184,0.6)" }}>
+                  Secure Access
+                </span>
+                <div className="flex-1 h-px" style={{ background: "rgba(96,165,250,0.2)" }} />
+              </div>
+            </div>
+
+            {/* ── Form ──────────────────────────────────────────────────── */}
             <form onSubmit={handleLogin} className="space-y-4">
-              
-              {/* Username Field */}
-              <div className="space-y-1">
-                <label 
-                  htmlFor="username" 
-                  className="text-[11px] leading-[16px] tracking-[0.05em] font-bold uppercase text-[#505f76]"
-                >
+
+              {/* Role selector */}
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold tracking-widest uppercase"
+                  style={{ color: "rgba(148,163,184,0.8)" }}>
+                  Role
+                </label>
+                <div className="grid grid-cols-5 gap-1 p-1 rounded-xl"
+                  style={{ backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  {(Object.entries(ROLE_LABELS) as [Role, string][]).map(([val, label]) => (
+                    <button
+                      key={val}
+                      type="button"
+                      onClick={() => setRole(val)}
+                      className="py-1.5 rounded-lg text-[11px] font-bold transition-all"
+                      style={
+                        role === val
+                          ? { backgroundColor: "#1d4ed8", color: "#ffffff", boxShadow: "0 2px 8px rgba(29,78,216,0.4)" }
+                          : { color: "rgba(148,163,184,0.7)", backgroundColor: "transparent" }
+                      }
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Username */}
+              <div className="space-y-1.5">
+                <label htmlFor="username"
+                  className="text-[11px] font-bold tracking-widest uppercase"
+                  style={{ color: "rgba(148,163,184,0.8)" }}>
                   Username
                 </label>
-                <div className="relative mt-1">
-                  <User 
-                    size={18} 
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#727780]" 
-                  />
+                <div className="relative">
+                  <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2"
+                    style={{ color: "rgba(148,163,184,0.5)" }} />
                   <input
                     id="username"
-                    name="username"
                     type="text"
-                    placeholder="Enter your ID or email"
-                    required
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full h-[36px] pl-10 pr-4 bg-[#ffffff] border border-[#c2c7d1] rounded-lg text-[14px] placeholder:text-[#727780]/50 transition-all focus:outline-none focus:border-[#00355f] focus:ring-1 focus:ring-[#00355f]"
+                    onChange={(e) => { setUsername(e.target.value); setError(""); }}
+                    placeholder="Enter your ID or email"
+                    autoComplete="username"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl text-[13px] outline-none transition-all"
+                    style={{
+                      backgroundColor: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      color: "#ffffff",
+                    }}
+                    onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(96,165,250,0.6)")}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
                   />
                 </div>
               </div>
 
-              {/* Password Field */}
-              <div className="space-y-1">
+              {/* Password */}
+              <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <label 
-                    htmlFor="password" 
-                    className="text-[11px] leading-[16px] tracking-[0.05em] font-bold uppercase text-[#505f76]"
-                  >
+                  <label htmlFor="password"
+                    className="text-[11px] font-bold tracking-widest uppercase"
+                    style={{ color: "rgba(148,163,184,0.8)" }}>
                     Password
                   </label>
-                  <a href="#" className="text-[11px] leading-[16px] tracking-[0.05em] font-bold uppercase text-[#00355f] hover:underline transition-all">
-                    Forgot?
+                  <a href="#"
+                    className="text-[11px] font-semibold transition-colors"
+                    style={{ color: "#60a5fa" }}
+                    onMouseOver={(e) => (e.currentTarget.style.color = "#93c5fd")}
+                    onMouseOut={(e) => (e.currentTarget.style.color = "#60a5fa")}
+                  >
+                    Forgot password?
                   </a>
                 </div>
-                <div className="relative mt-1">
-                  <Lock 
-                    size={18} 
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#727780]" 
-                  />
+                <div className="relative">
+                  <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2"
+                    style={{ color: "rgba(148,163,184,0.5)" }} />
                   <input
                     id="password"
-                    name="password"
-                    type="password"
-                    placeholder="••••••••"
-                    required
+                    type={showPwd ? "text" : "password"}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-[36px] pl-10 pr-4 bg-[#ffffff] border border-[#c2c7d1] rounded-lg text-[14px] placeholder:text-[#727780]/50 transition-all focus:outline-none focus:border-[#00355f] focus:ring-1 focus:ring-[#00355f]"
+                    onChange={(e) => { setPassword(e.target.value); setError(""); }}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    className="w-full pl-9 pr-10 py-2.5 rounded-xl text-[13px] outline-none transition-all"
+                    style={{
+                      backgroundColor: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      color: "#ffffff",
+                    }}
+                    onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(96,165,250,0.6)")}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
                   />
+                  <button type="button" onClick={() => setShowPwd((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                    style={{ color: "rgba(148,163,184,0.5)" }}>
+                    {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
                 </div>
               </div>
 
-              {/* Options */}
-              <div className="flex items-center gap-2 pt-1">
-                <input 
-                  id="remember" 
-                  type="checkbox" 
-                  className="w-4 h-4 border-[#c2c7d1] rounded text-[#00355f] focus:ring-[#00355f]"
-                />
-                <label htmlFor="remember" className="text-[13px] text-[#42474f]">
+              {/* Remember me */}
+              <label className="flex items-center gap-2.5 cursor-pointer" onClick={() => setRemember(v => !v)}>
+                <div
+                  className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0 transition-all"
+                  style={{
+                    backgroundColor: remember ? "#1d4ed8" : "transparent",
+                    border: `1.5px solid ${remember ? "#1d4ed8" : "rgba(255,255,255,0.2)"}`,
+                  }}
+                >
+                  {remember && (
+                    <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+                      <path d="M1 3.5L3.5 6L8 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </div>
+                <span className="text-[12px]" style={{ color: "rgba(148,163,184,0.8)" }}>
                   Remember this workstation
-                </label>
-              </div>
+                </span>
+              </label>
 
-              {/* Sign In Button */}
+              {/* Error */}
+              {error && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-[12px]"
+                  style={{ backgroundColor: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#fca5a5" }}>
+                  <span>⚠</span> {error}
+                </div>
+              )}
+
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={status !== "idle"}
-                className={`w-full h-10 mt-4 text-white text-[16px] font-semibold rounded-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-sm ${
-                  status === "success" ? "bg-green-700" : "bg-[#00355f]"
-                }`}
+                className="w-full py-3 rounded-xl text-[14px] font-bold flex items-center justify-center gap-2 transition-all mt-2"
+                style={
+                  status === "success"
+                    ? { backgroundColor: "#16a34a", color: "#ffffff" }
+                    : { background: "linear-gradient(135deg, #1d4ed8, #2563eb)", color: "#ffffff",
+                        boxShadow: "0 4px 16px rgba(29,78,216,0.4)" }
+                }
               >
-                {status === "idle" && (
-                  <>
-                    Sign In
-                    <ArrowRight size={18} />
-                  </>
-                )}
-                {status === "loading" && (
-                  <>
-                    <Loader2 size={18} className="animate-spin" />
-                    Authenticating...
-                  </>
-                )}
-                {status === "success" && (
-                  <>
-                    <CheckCircle2 size={18} />
-                    Success
-                  </>
-                )}
+                {status === "idle"    && <><span>Sign In</span><ArrowRight size={16} /></>}
+                {status === "loading" && <><Loader2 size={16} className="animate-spin" /><span>Authenticating…</span></>}
+                {status === "success" && <><CheckCircle2 size={16} /><span>Access Granted</span></>}
               </button>
             </form>
-          </div>
 
-          {/* Single Secondary Image/Graphic for Professionalism */}
-          <div className="mt-8 flex flex-col items-center gap-2">
-            <div className="w-full h-1 bg-[#c2c7d1] rounded-full overflow-hidden opacity-30">
-              <div 
-                className="h-full bg-[#00355f] transition-all duration-1000 ease-in-out" 
-                style={{ width: `${progressWidth}%` }}
-              ></div>
+            {/* ── Footer note ────────────────────────────────────────────── */}
+            <div className="mt-6 flex items-center justify-center gap-2">
+              <ShieldCheck size={13} style={{ color: "rgba(96,165,250,0.6)" }} />
+              <p className="text-[11px] text-center"
+                style={{ color: "rgba(148,163,184,0.5)" }}>
+                Authorized personnel only · IT Finance Department
+              </p>
             </div>
-            <p className="text-[11px] leading-[16px] tracking-[0.05em] font-bold uppercase text-[#727780] text-center">
-              Authorized Access Only
-            </p>
           </div>
         </div>
-      </main>
 
-      {/* Footer */}
-      <footer className="p-6 flex flex-col md:flex-row justify-between items-center border-t border-[#c2c7d1]/30 gap-4 relative z-10">
-        <div className="flex items-center gap-4">
-          <span className="text-[11px] leading-[16px] tracking-[0.05em] font-bold uppercase text-[#505f76]">
-            IT Finance Department
+        {/* Bottom meta row */}
+        <div className="flex justify-between items-center mt-4 px-1">
+          <span className="text-[10px] font-bold tracking-widest uppercase"
+            style={{ color: "rgba(148,163,184,0.35)" }}>
+            v2.4.0-PRO
           </span>
-          <div className="w-1 h-1 bg-[#727780] rounded-full hidden md:block"></div>
-          <span className="text-[13px] text-[#727780]">
-            v4.2.1-stable
-          </span>
+          <div className="flex items-center gap-3">
+            {["Privacy","Terms","Support"].map((link) => (
+              <a key={link} href="#"
+                className="text-[10px] font-semibold uppercase tracking-widest transition-colors"
+                style={{ color: "rgba(148,163,184,0.35)" }}
+                onMouseOver={(e) => (e.currentTarget.style.color = "rgba(96,165,250,0.7)")}
+                onMouseOut={(e) => (e.currentTarget.style.color = "rgba(148,163,184,0.35)")}>
+                {link}
+              </a>
+            ))}
+          </div>
         </div>
-        <div className="flex items-center gap-6">
-          <a href="#" className="text-[11px] leading-[16px] tracking-[0.05em] font-bold uppercase text-[#505f76] hover:text-[#00355f] transition-colors">
-            Privacy Policy
-          </a>
-          <a href="#" className="text-[11px] leading-[16px] tracking-[0.05em] font-bold uppercase text-[#505f76] hover:text-[#00355f] transition-colors">
-            Terms of Service
-          </a>
-          <a href="#" className="text-[11px] leading-[16px] tracking-[0.05em] font-bold uppercase text-[#505f76] hover:text-[#00355f] transition-colors">
-            Support
-          </a>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 }
