@@ -13,8 +13,8 @@ import logo from "../../../public/logo.png";
 
 const menuItems = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-   { name: "Request", path: "/request", icon: FilePlus },
-   { name: "Approvals", path: "/approvals", icon: CheckCircle },
+  // { name: "Request Management", path: "/request", icon: FilePlus },
+  { name: "Approvals", path: "/approvals", icon: CheckCircle },
   { name: "Transactions", path: "/transactions", icon: ArrowLeftRight },
   { name: "Reports", path: "/reports", icon: FileText },
   { name: "Notifications", path: "/notifications", icon: Bell },

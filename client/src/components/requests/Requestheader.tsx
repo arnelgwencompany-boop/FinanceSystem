@@ -12,10 +12,10 @@ export default function RequestHeader({ onPrint }: Props) {
           Finance
         </p>
         <h2 className="text-2xl font-bold text-[#00355f] leading-tight">
-          Payment Request
+          Request Management
         </h2>
         <p className="text-[13px] text-[#505f76] mt-1">
-          Generate and print a payment request form from selected transactions.
+          Manage and process requests of employeee.
         </p>
       </div>
       <div className="flex gap-2">

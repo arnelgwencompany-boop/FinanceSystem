@@ -1,48 +1,21 @@
 import { useState, useRef } from "react";
-import {  EMPTY_FORM } from "../../types/requests";
-import type { Transaction, PaymentRequestForm, } from "../../types/requests";
+import type { PettyCashRequest, PaymentRequestForm } from "../../types/requests";
+import { EMPTY_FORM } from "../../types/requests";
 import RequestHeader from "../../components/requests/Requestheader";
-import TransactionSelector from "../../components/requests/Transactionselector";
-import RequestDetailsForm from "../../components/requests/Requestdetailsform";
-import FormSummaryBar from "../../components/requests/Formsummurybar";
+import RequestSelector from "../../components/requests/Requestselector";
 import PrintableForm from "../../components/requests/Printableform";
+import { ALL_REQUESTS } from "../../data/requestData";
 
-// ─── Mock data (replace with real data from context/store/props) ─────────────
-const ALL_TRANSACTIONS: Transaction[] = [
-  {
-    id: 1, department: "GA", unit: "0", item: "1", date: "2026-01-25",
-    description: "Headphone set (500 pcs)", payOut: 3000.9, VAT: 252.4,
-    withoutVAT: 2102.5, deliveryFee: 394, balance: 97000.1, status: "Completed",
-  },
-  {
-    id: 2, department: "GO", unit: "0", item: "2", date: "2026-01-11",
-    description: "Humidity Temperature sensor", payOut: 2000.5, VAT: 0,
-    withoutVAT: 178, deliveryFee: 58.5, balance: 95000.6, status: "Completed",
-  },
-  {
-    id: 3, department: "IT Ops", unit: "5", item: "3", date: "2026-02-03",
-    description: "Network Switch (24-port)", payOut: 8500, VAT: 1020,
-    withoutVAT: 7480, deliveryFee: 250, balance: 86500.6, status: "Completed",
-  },
-  {
-    id: 4, department: "IT Ops", unit: "2", item: "4", date: "2026-02-15",
-    description: "UPS Battery Backup", payOut: 4200, VAT: 504,
-    withoutVAT: 3696, deliveryFee: 0, balance: 82300.6, status: "Pending",
-  },
-  {
-    id: 5, department: "Marketing", unit: "1", item: "5", date: "2026-03-01",
-    description: "Printer cartridges (bulk)", payOut: 1500, VAT: 180,
-    withoutVAT: 1320, deliveryFee: 120, balance: 80800.6, status: "Completed",
-  },
-];
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function RequestPage() {
+  const [requests, setRequests] = useState<PettyCashRequest[]>(ALL_REQUESTS);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const [form, setForm] = useState<PaymentRequestForm>(EMPTY_FORM);
+  const [form] = useState<PaymentRequestForm>(EMPTY_FORM);
   const printRef = useRef<HTMLDivElement>(null!);
 
-  const selectedTransactions = ALL_TRANSACTIONS.filter((t) => selectedIds.has(t.id));
+  const selectedRequests = requests.filter((r) => selectedIds.has(r.id));
 
   const handleToggle = (id: number) => {
     setSelectedIds((prev) => {
@@ -52,12 +25,31 @@ export default function RequestPage() {
     });
   };
 
-  const handleSelectAll = () => {
-    setSelectedIds(new Set(ALL_TRANSACTIONS.map((t) => t.id)));
+  const handleSelectAll = (visible: PettyCashRequest[]) => {
+    setSelectedIds(new Set(visible.map((r) => r.id)));
   };
 
   const handleClearAll = () => setSelectedIds(new Set());
 
+  // ── Approval actions ──────────────────────────────────────────────────────
+  const handleApprove = (ids: Set<number>) => {
+    setRequests((prev) =>
+      prev.map((r) => (ids.has(r.id) ? { ...r, status: "Approved" } : r))
+    );
+    setSelectedIds(new Set());
+  };
+
+  const handleReject = (ids: Set<number>) => {
+    setRequests((prev) =>
+      prev.map((r) => (ids.has(r.id) ? { ...r, status: "Rejected" } : r))
+    );
+    setSelectedIds(new Set());
+  };
+
+  const handleApproveSingle = (id: number) => handleApprove(new Set([id]));
+  const handleRejectSingle = (id: number) => handleReject(new Set([id]));
+
+  // ── Print ─────────────────────────────────────────────────────────────────
   const handlePrint = () => {
     if (!printRef.current) return;
     const printContents = printRef.current.innerHTML;
@@ -77,11 +69,7 @@ export default function RequestPage() {
             .text-right { text-align: right; }
             .text-center { text-align: center; }
             .font-bold { font-weight: bold; }
-            .font-mono { font-family: monospace; }
-            @media print {
-              body { padding: 10px; }
-              @page { margin: 1cm; }
-            }
+            @media print { body { padding: 10px; } @page { margin: 1cm; } }
           </style>
         </head>
         <body>${printContents}</body>
@@ -98,29 +86,40 @@ export default function RequestPage() {
 
         <RequestHeader onPrint={handlePrint} />
 
-        <FormSummaryBar
-          transactions={selectedTransactions}
-          withheldAmount={form.withheldAmount}
-        />
-
         <div className="grid grid-cols-12 gap-6 items-start">
 
-          {/* LEFT — selector + request details */}
-          <div className="col-span-12 xl:col-span-4 space-y-5">
-            <TransactionSelector
-              transactions={ALL_TRANSACTIONS}
+          {/* LEFT — request list + actions */}
+          <div className="col-span-12 xl:col-span-5 space-y-5">
+            <RequestSelector
+              requests={requests}
               selectedIds={selectedIds}
               onToggle={handleToggle}
               onSelectAll={handleSelectAll}
               onClearAll={handleClearAll}
+              onApproveSingle={handleApproveSingle}
+              onRejectSingle={handleRejectSingle}
+              onApproveSelected={() => handleApprove(selectedIds)}
+              onRejectSelected={() => handleReject(selectedIds)}
             />
-            {/* <RequestDetailsForm form={form} onChange={setForm} /> */}
           </div>
 
           {/* RIGHT — printable preview */}
-          <div className="col-span-12 xl:col-span-8">
+          <div className="col-span-12 xl:col-span-7">
             <PrintableForm
-              transactions={selectedTransactions}
+              transactions={selectedRequests.map((r) => ({
+                id: r.id,
+                department: r.department,
+                unit: "1",
+                item: String(r.id),
+                date: r.date,
+                description: r.description,
+                payOut: r.amount,
+                VAT: r.VAT,
+                withoutVAT: r.withoutVAT,
+                deliveryFee: r.deliveryFee,
+                balance: 0,
+                status: r.status,
+              }))}
               form={form}
               printRef={printRef}
             />

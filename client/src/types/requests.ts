@@ -1,5 +1,23 @@
 // The full transaction shape (from TransactionsPage)
-export type Transaction = {
+// ── Petty Cash Request (admin view) ─────────────────────────────────────────
+export type RequestStatus = "Pending" | "Approved" | "Rejected";
+
+export interface PettyCashRequest {
+  id: number;
+  requestNo: string;
+  requestedBy: string;
+  department: string;
+  date: string;
+  description: string;
+  amount: number;
+  VAT: number;
+  withoutVAT: number;
+  deliveryFee: number;
+  status: RequestStatus;
+}
+
+// ── Legacy Transaction (kept for PrintableForm compatibility) ─────────────────
+export interface Transaction {
   id: number;
   department: string;
   unit: string;
@@ -11,8 +29,8 @@ export type Transaction = {
   withoutVAT: number;
   deliveryFee: number;
   balance: number;
-  status: "Completed" | "Pending";
-};
+  status: string;
+}
 
 // What's submitted into the payment request form
 export type PaymentRequestForm = {
