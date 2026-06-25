@@ -5,6 +5,7 @@ from django.conf import settings
 class Request(models.Model):
     STATUS_CHOICES = [
     ("draft", "Draft"),
+    ("pending", "Pending"),
     ("pending_supervisor", "Pending Supervisor"),
     ("pending_director", "Pending Director"),
     ("pending_finance", "Pending Finance"),
@@ -55,7 +56,7 @@ class Request(models.Model):
     status = models.CharField(max_length=50, default="Pending")
 
     # Approval workflow
-    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default="draft")
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default="pending")
 
     # Attachments / notes
     invoice = models.FileField(upload_to='invoices/', null=True, blank=True)

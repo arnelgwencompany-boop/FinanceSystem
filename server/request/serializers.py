@@ -3,13 +3,14 @@ from .models import Request
 
 
 class RequestSerializer(serializers.ModelSerializer):
-    requested_by_name = serializers.CharField(
-        source="requested_by.username", read_only=True
-    )
+    requested_by_name = serializers.SerializerMethodField()
     class Meta:
         model = Request
         fields = "__all__"
         read_only_fields = ["request_no", "requested_by", "status", "created_at"]
+    
+    def get_requested_by_name(self, obj):
+        return f"{obj.requested_by.first_name} {obj.requested_by.last_name}"
 
 
 class RequestCreateSerializer(serializers.ModelSerializer):
@@ -22,3 +23,4 @@ class RequestCreateSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         validated_data["requested_by"] = user
         return super().create(validated_data)
+    
