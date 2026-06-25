@@ -1,8 +1,8 @@
 import type { DashboardSummary, DashboardTransaction, DeptSpend } from "../../types/dashboard";
-import DashboardHeader from "../../components/dashboard/Dashboardheader";
-import SummaryCards from "../../components/dashboard/Summarycards";
-import LatestTransactions from "../../components/dashboard/Latesttransactions";
-import SpendingChart from "../../components/dashboard/Spendingchart";
+import DashboardHeader from "../../components/Admin/dashboard/Dashboardheader";
+import SummaryCards from "../../components/Admin/dashboard/Summarycards";
+import LatestTransactions from "../../components/Admin/dashboard/Latesttransactions";
+import SpendingChart from "../../components/Admin/dashboard/Spendingchart";
 
 // ─── Static mock data ────────────────────────────────────────────────────────
 

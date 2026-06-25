@@ -1,5 +1,5 @@
 import { X, Check, XCircle, Printer, CheckCircle2, Clock, AlertCircle } from "lucide-react";
-import type { ApprovalTransaction, ApprovalStatus } from "../../types/approvals";
+import type { ApprovalTransaction, ApprovalStatus } from "../../../types/approvals";
 
 type Props = {
   transaction: ApprovalTransaction | null;

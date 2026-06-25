@@ -1,5 +1,5 @@
 import { Download } from "lucide-react";
-import type { Transaction } from "../../types/transactions";
+import type { Transaction } from "../../../types/transactions";
 import Papa from "papaparse";
 
 type Props = {

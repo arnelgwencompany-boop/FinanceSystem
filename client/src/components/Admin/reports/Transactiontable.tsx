@@ -1,4 +1,4 @@
-import type { Transaction } from "../../types/reports";
+import type { Transaction } from "../../../types/reports";
 
 type Props = {
   data: Transaction[];

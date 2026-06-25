@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Eye, Search, Filter, Check, X } from "lucide-react";
-import type { ApprovalTransaction, ApprovalStatus } from "../../types/approvals";
+import type { ApprovalTransaction, ApprovalStatus } from "../../../types/approvals";
 
 type Props = {
   transactions: ApprovalTransaction[];

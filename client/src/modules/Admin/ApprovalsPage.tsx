@@ -1,7 +1,7 @@
 import { useState } from "react";
-import ApprovalsHeader from "../../components/aprovals/ApprovalHeader";
-import ApprovalsTable from "../../components/aprovals/ApprovalTable";
-import ApprovalDetailPanel from "../../components/aprovals/Approvaldetalpanel";
+import ApprovalsHeader from "../../components/Admin/aprovals/ApprovalHeader";
+import ApprovalsTable from "../../components/Admin/aprovals/ApprovalTable";
+import ApprovalDetailPanel from "../../components/Admin/aprovals/Approvaldetalpanel";
 import { MOCK_APPROVALS } from "../../data/approvalData";
 import type { ApprovalTransaction } from "../../types/approvals";
 

@@ -1,4 +1,4 @@
-import { CATEGORY_COLORS } from "../../data/reportData";
+import { CATEGORY_COLORS } from "../../../data/reportData";
 
 type Props = {
   groupedByCategory: Record<string, number>;

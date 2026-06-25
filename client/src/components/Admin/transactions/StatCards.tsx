@@ -1,5 +1,5 @@
 import { TrendingUp, Clock, CheckCircle, Wallet } from "lucide-react";
-import type { Transaction } from "../../types/transactions";
+import type { Transaction } from "../../../types/transactions";
 
 type Props = {
   transactions: Transaction[];

@@ -1,4 +1,4 @@
-import type { ApprovalTransaction } from "../../types/approvals";
+import type { ApprovalTransaction } from "../../../types/approvals";
 
 type Props = {
   transactions: ApprovalTransaction[];

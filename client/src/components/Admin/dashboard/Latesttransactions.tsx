@@ -1,6 +1,6 @@
 import { List, Filter, MoreVertical, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { DashboardTransaction } from "../../types/dashboard";
+import type { DashboardTransaction } from "../../../types/dashboard";
 
 type Props = {
   transactions: DashboardTransaction[];

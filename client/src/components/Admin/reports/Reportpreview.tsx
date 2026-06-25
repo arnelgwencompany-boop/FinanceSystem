@@ -1,11 +1,11 @@
 import { Wallet } from "lucide-react";
-import type { Transaction } from "../../types/reports";
-import KpiCards from "../../components/reports/Kpicards";
-import WeeklyTrendChart from "../../components/reports/Weeklytrendchart ";
-import CategoryBreakdown from "../../components/reports/Categorybreakdown ";
-import TransactionTable from "../../components/reports/Transactiontable";
-import ReportFooter from "../../components/reports/Reportfooter";
-import { MONTHLY_BUDGET } from "../../data/reportData";
+import type { Transaction } from "../../../types/reports";
+import KpiCards from "./Kpicards";
+import WeeklyTrendChart from "./Weeklytrendchart ";
+import CategoryBreakdown from "./Categorybreakdown ";
+import TransactionTable from "./Transactiontable";
+import ReportFooter from "./Reportfooter";
+import { MONTHLY_BUDGET } from "../../../data/reportData";
 
 type Props = {
   filteredData: Transaction[];

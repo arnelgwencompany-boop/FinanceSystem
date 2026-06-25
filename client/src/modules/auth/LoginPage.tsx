@@ -1,37 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  User, Lock, ArrowRight, Loader2, CheckCircle2, Eye, EyeOff, ShieldCheck,
+  User, Lock, ArrowRight, Loader2, CheckCircle2,
+  Eye, EyeOff, ChevronDown, ShieldCheck,
 } from "lucide-react";
 import logo from "../../../public/logo.png";
 
 type Role = "employee" | "supervisor" | "director" | "finance" | "admin";
 
-const ROLE_LABELS: Record<Role, string> = {
-  employee:   "Employee",
-  supervisor: "Supervisor",
-  director:   "Director",
-  finance:    "Finance",
-  admin:      "Admin",
-};
+const ROLE_OPTIONS: { value: Role; label: string }[] = [
+  { value: "employee",   label: "Employee"   },
+  { value: "supervisor", label: "Supervisor" },
+  { value: "director",   label: "Director"   },
+  { value: "finance",    label: "Finance"    },
+  { value: "admin",      label: "Admin"      },
+];
 
 export default function LoginPage() {
   const navigate = useNavigate();
 
-  const [username,  setUsername]  = useState("");
-  const [password,  setPassword]  = useState("");
-  const [role,      setRole]      = useState<Role>("employee");
-  const [remember,  setRemember]  = useState(false);
-  const [showPwd,   setShowPwd]   = useState(false);
-  const [error,     setError]     = useState("");
-  const [status,    setStatus]    = useState<"idle" | "loading" | "success">("idle");
-  const [tick,      setTick]      = useState(0);
-
-  // Animated dots on the decorative border
-  useEffect(() => {
-    const id = setInterval(() => setTick((t) => t + 1), 1200);
-    return () => clearInterval(id);
-  }, []);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [role,     setRole]     = useState<Role>("employee");
+  const [remember, setRemember] = useState(false);
+  const [showPwd,  setShowPwd]  = useState(false);
+  const [error,    setError]    = useState("");
+  const [status,   setStatus]   = useState<"idle" | "loading" | "success">("idle");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,306 +35,232 @@ export default function LoginPage() {
       return;
     }
     setStatus("loading");
-    setTimeout(() => {
-      setStatus("success");
-      setTimeout(() => navigate("/dashboard"), 1000);
-    }, 1500);
+     setTimeout(() => {
+    //  SAVE USER (simulate backend)
+    const user = {
+      name: username,
+      role: role,
+      initials: username.slice(0, 2).toUpperCase(),
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", "fake-token"); // simulate auth
+
+    setStatus("success");
+
+    setTimeout(() => navigate("/dashboard"), 1000);
+  }, 1500);
   };
 
-  // Corner marker component
-  const Corner = ({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) => {
-    const base = "absolute w-5 h-5";
-    const positions: Record<string, string> = {
-      tl: "-top-[2px] -left-[2px]",
-      tr: "-top-[2px] -right-[2px]",
-      bl: "-bottom-[2px] -left-[2px]",
-      br: "-bottom-[2px] -right-[2px]",
-    };
-    const borders: Record<string, string> = {
-      tl: "border-t-2 border-l-2",
-      tr: "border-t-2 border-r-2",
-      bl: "border-b-2 border-l-2",
-      br: "border-b-2 border-r-2",
-    };
-    return <div className={`${base} ${positions[pos]} ${borders[pos]} border-[#60a5fa]`} />;
-  };
+  // Shared input style
+  const inputCls =
+    "w-full pl-12 pr-4 py-4 rounded-xl text-[16px] bg-white border-2 border-slate-200 text-[#1a2e3f] placeholder:text-slate-400 outline-none transition-all focus:border-[#00355f] focus:ring-4 focus:ring-[#00355f]/10";
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{
-        background: "linear-gradient(160deg, #001f3f 0%, #00355f 45%, #0a1f3c 100%)",
-      }}
+      className="min-h-screen flex flex-col items-center justify-center p-5"
+      style={{ backgroundColor: "#f0f4f8" }}
     >
-      {/* Background grid overlay */}
+      {/* ── Card ──────────────────────────────────────────────────────────── */}
       <div
-        className="fixed inset-0 opacity-[0.04] pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
+        className="w-full max-w-[460px] bg-white rounded-3xl overflow-hidden"
+        style={{ boxShadow: "0 8px 48px rgba(0,53,95,0.14), 0 2px 8px rgba(0,53,95,0.08)" }}
+      >
 
-      {/* Ambient glows */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full blur-[120px]"
-          style={{ backgroundColor: "rgba(37,99,235,0.25)" }} />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full blur-[120px]"
-          style={{ backgroundColor: "rgba(96,165,250,0.15)" }} />
-      </div>
+        {/* Top accent bar */}
+        <div className="h-2 w-full" style={{ background: "linear-gradient(90deg,#00355f,#2563eb,#60a5fa)" }} />
 
-      {/* ── CARD ─────────────────────────────────────────────────────────── */}
-      <div className="relative w-full max-w-[440px]">
-
-        {/* Outer border frame with animated corners */}
-        <div className="relative p-[1px] rounded-2xl"
-          style={{ background: "linear-gradient(135deg, rgba(96,165,250,0.4), rgba(255,255,255,0.08), rgba(96,165,250,0.2))" }}>
-
-          <Corner pos="tl" />
-          <Corner pos="tr" />
-          <Corner pos="bl" />
-          <Corner pos="br" />
-
-          {/* Animated scan line */}
+        {/* Header section */}
+        <div
+          className="flex flex-col items-center px-10 pt-10 pb-8"
+          style={{ backgroundColor: "#00355f" }}
+        >
+          {/* Logo */}
           <div
-            className="absolute left-0 right-0 h-[1px] pointer-events-none"
-            style={{
-              top: `${20 + (tick % 5) * 15}%`,
-              background: "linear-gradient(90deg, transparent, rgba(96,165,250,0.3), transparent)",
-              transition: "top 1.2s ease-in-out",
-            }}
-          />
-
-          {/* Inner card */}
-          <div
-            className="rounded-2xl px-8 py-10 relative overflow-hidden"
-            style={{ backgroundColor: "rgba(5,20,40,0.92)", backdropFilter: "blur(20px)" }}
+            className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center mb-5 overflow-hidden"
+            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.25)" }}
           >
+            <img
+              src={logo}
+              alt="Petty Cash System"
+              className="w-14 h-14 object-contain"
+              onError={(e) => {
+                const t = e.currentTarget as HTMLImageElement;
+                t.style.display = "none";
+                const p = t.parentElement;
+                if (p)
+                  p.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00355f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`;
+              }}
+            />
+          </div>
 
-            {/* ── Header ─────────────────────────────────────────────────── */}
-            <div className="flex flex-col items-center mb-8 text-center">
-              {/* Logo */}
-              <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 overflow-hidden"
-                style={{
-                  backgroundColor: "#ffffff",
-                  boxShadow: "0 0 0 1px rgba(96,165,250,0.3), 0 8px 24px rgba(0,0,0,0.4)",
-                }}
-              >
-                <img
-                  src={logo}
-                  alt="Petty Cash System"
-                  className="w-12 h-12 object-contain"
-                  onError={(e) => {
-                    const t = e.currentTarget as HTMLImageElement;
-                    t.style.display = "none";
-                    const p = t.parentElement;
-                    if (p) p.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00355f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`;
-                  }}
+          <h1 className="text-[26px] font-extrabold text-white tracking-tight">
+            Petty Cash System
+          </h1>
+          <p className="text-[14px] font-medium mt-1.5" style={{ color: "#93c5fd" }}>
+            IT Finance Management
+          </p>
+        </div>
+
+        {/* Form section */}
+        <div className="px-10 py-9">
+          <h2 className="text-[22px] font-bold text-[#00355f] mb-1">Welcome back</h2>
+          <p className="text-[15px] text-slate-500 mb-7">Sign in to your account to continue.</p>
+
+          <form onSubmit={handleLogin} className="space-y-5">
+
+            {/* Role dropdown */}
+            <div className="space-y-2">
+              <label className="text-[15px] font-bold text-[#1a2e3f]">Select Role</label>
+              <div className="relative">
+                <User size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value as Role)}
+                  className="w-full pl-12 pr-10 py-4 rounded-xl text-[16px] bg-white border-2 border-slate-200 text-[#1a2e3f] outline-none transition-all appearance-none cursor-pointer focus:border-[#00355f] focus:ring-4 focus:ring-[#00355f]/10"
+                  style={{ fontWeight: 500 }}
+                >
+                  {ROLE_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+                <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Username */}
+            <div className="space-y-2">
+              <label htmlFor="username" className="text-[15px] font-bold text-[#1a2e3f]">
+                Username
+              </label>
+              <div className="relative">
+                <User size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => { setUsername(e.target.value); setError(""); }}
+                  placeholder="Enter your ID or email"
+                  autoComplete="username"
+                  className={inputCls}
                 />
               </div>
-
-              <h1
-                className="text-[22px] font-extrabold leading-tight tracking-tight"
-                style={{ color: "#ffffff" }}
-              >
-                Petty Cash System
-              </h1>
-              <p className="text-[12px] font-semibold tracking-[0.18em] uppercase mt-1.5"
-                style={{ color: "#60a5fa" }}>
-                IT Finance Management
-              </p>
-
-              {/* Divider */}
-              <div className="flex items-center gap-3 mt-5 w-full">
-                <div className="flex-1 h-px" style={{ background: "rgba(96,165,250,0.2)" }} />
-                <span className="text-[10px] font-bold tracking-widest uppercase"
-                  style={{ color: "rgba(148,163,184,0.6)" }}>
-                  Secure Access
-                </span>
-                <div className="flex-1 h-px" style={{ background: "rgba(96,165,250,0.2)" }} />
-              </div>
             </div>
 
-            {/* ── Form ──────────────────────────────────────────────────── */}
-            <form onSubmit={handleLogin} className="space-y-4">
-
-              {/* Role selector */}
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold tracking-widest uppercase"
-                  style={{ color: "rgba(148,163,184,0.8)" }}>
-                  Role
+            {/* Password */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <label htmlFor="password" className="text-[15px] font-bold text-[#1a2e3f]">
+                  Password
                 </label>
-                <div className="grid grid-cols-5 gap-1 p-1 rounded-xl"
-                  style={{ backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  {(Object.entries(ROLE_LABELS) as [Role, string][]).map(([val, label]) => (
-                    <button
-                      key={val}
-                      type="button"
-                      onClick={() => setRole(val)}
-                      className="py-1.5 rounded-lg text-[11px] font-bold transition-all"
-                      style={
-                        role === val
-                          ? { backgroundColor: "#1d4ed8", color: "#ffffff", boxShadow: "0 2px 8px rgba(29,78,216,0.4)" }
-                          : { color: "rgba(148,163,184,0.7)", backgroundColor: "transparent" }
-                      }
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Username */}
-              <div className="space-y-1.5">
-                <label htmlFor="username"
-                  className="text-[11px] font-bold tracking-widest uppercase"
-                  style={{ color: "rgba(148,163,184,0.8)" }}>
-                  Username
-                </label>
-                <div className="relative">
-                  <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2"
-                    style={{ color: "rgba(148,163,184,0.5)" }} />
-                  <input
-                    id="username"
-                    type="text"
-                    value={username}
-                    onChange={(e) => { setUsername(e.target.value); setError(""); }}
-                    placeholder="Enter your ID or email"
-                    autoComplete="username"
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl text-[13px] outline-none transition-all"
-                    style={{
-                      backgroundColor: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "#ffffff",
-                    }}
-                    onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(96,165,250,0.6)")}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <label htmlFor="password"
-                    className="text-[11px] font-bold tracking-widest uppercase"
-                    style={{ color: "rgba(148,163,184,0.8)" }}>
-                    Password
-                  </label>
-                  <a href="#"
-                    className="text-[11px] font-semibold transition-colors"
-                    style={{ color: "#60a5fa" }}
-                    onMouseOver={(e) => (e.currentTarget.style.color = "#93c5fd")}
-                    onMouseOut={(e) => (e.currentTarget.style.color = "#60a5fa")}
-                  >
-                    Forgot password?
-                  </a>
-                </div>
-                <div className="relative">
-                  <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2"
-                    style={{ color: "rgba(148,163,184,0.5)" }} />
-                  <input
-                    id="password"
-                    type={showPwd ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => { setPassword(e.target.value); setError(""); }}
-                    placeholder="••••••••"
-                    autoComplete="current-password"
-                    className="w-full pl-9 pr-10 py-2.5 rounded-xl text-[13px] outline-none transition-all"
-                    style={{
-                      backgroundColor: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "#ffffff",
-                    }}
-                    onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(96,165,250,0.6)")}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
-                  />
-                  <button type="button" onClick={() => setShowPwd((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
-                    style={{ color: "rgba(148,163,184,0.5)" }}>
-                    {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Remember me */}
-              <label className="flex items-center gap-2.5 cursor-pointer" onClick={() => setRemember(v => !v)}>
-                <div
-                  className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0 transition-all"
-                  style={{
-                    backgroundColor: remember ? "#1d4ed8" : "transparent",
-                    border: `1.5px solid ${remember ? "#1d4ed8" : "rgba(255,255,255,0.2)"}`,
-                  }}
+                <a
+                  href="#"
+                  className="text-[14px] font-semibold text-[#2563eb] hover:text-[#00355f] transition-colors"
                 >
-                  {remember && (
-                    <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
-                      <path d="M1 3.5L3.5 6L8 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-[12px]" style={{ color: "rgba(148,163,184,0.8)" }}>
-                  Remember this workstation
-                </span>
-              </label>
-
-              {/* Error */}
-              {error && (
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-[12px]"
-                  style={{ backgroundColor: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#fca5a5" }}>
-                  <span>⚠</span> {error}
-                </div>
-              )}
-
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={status !== "idle"}
-                className="w-full py-3 rounded-xl text-[14px] font-bold flex items-center justify-center gap-2 transition-all mt-2"
-                style={
-                  status === "success"
-                    ? { backgroundColor: "#16a34a", color: "#ffffff" }
-                    : { background: "linear-gradient(135deg, #1d4ed8, #2563eb)", color: "#ffffff",
-                        boxShadow: "0 4px 16px rgba(29,78,216,0.4)" }
-                }
-              >
-                {status === "idle"    && <><span>Sign In</span><ArrowRight size={16} /></>}
-                {status === "loading" && <><Loader2 size={16} className="animate-spin" /><span>Authenticating…</span></>}
-                {status === "success" && <><CheckCircle2 size={16} /><span>Access Granted</span></>}
-              </button>
-            </form>
-
-            {/* ── Footer note ────────────────────────────────────────────── */}
-            <div className="mt-6 flex items-center justify-center gap-2">
-              <ShieldCheck size={13} style={{ color: "rgba(96,165,250,0.6)" }} />
-              <p className="text-[11px] text-center"
-                style={{ color: "rgba(148,163,184,0.5)" }}>
-                Authorized personnel only · IT Finance Department
-              </p>
+                  Forgot password?
+                </a>
+              </div>
+              <div className="relative">
+                <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  id="password"
+                  type={showPwd ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); setError(""); }}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  className={`${inputCls} pr-12`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPwd((v) => !v)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#00355f] transition-colors"
+                  aria-label={showPwd ? "Hide password" : "Show password"}
+                >
+                  {showPwd ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
-          </div>
+
+            {/* Remember me */}
+            <label
+              className="flex items-center gap-3 cursor-pointer select-none"
+              onClick={() => setRemember((v) => !v)}
+            >
+              <div
+                className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 transition-all border-2"
+                style={{
+                  backgroundColor: remember ? "#00355f" : "transparent",
+                  borderColor: remember ? "#00355f" : "#cbd5e1",
+                }}
+              >
+                {remember && (
+                  <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+                    <path d="M1 4.5L4.5 8L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </div>
+              <span className="text-[15px] font-medium text-slate-600">
+                Remember this workstation
+              </span>
+            </label>
+
+            {/* Error */}
+            {error && (
+              <div
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium"
+                style={{ backgroundColor: "#fef2f2", border: "1.5px solid #fecaca", color: "#dc2626" }}
+              >
+                <span className="text-lg">⚠</span>
+                {error}
+              </div>
+            )}
+
+            {/* Submit button */}
+            <button
+              type="submit"
+              disabled={status !== "idle"}
+              className="w-full py-4 rounded-xl text-[17px] font-bold flex items-center justify-center gap-2.5 transition-all mt-2"
+              style={
+                status === "success"
+                  ? { backgroundColor: "#16a34a", color: "#fff", boxShadow: "0 4px 16px rgba(22,163,74,0.3)" }
+                  : status === "loading"
+                  ? { backgroundColor: "#1e40af", color: "#fff", opacity: 0.9 }
+                  : { backgroundColor: "#00355f", color: "#fff", boxShadow: "0 4px 16px rgba(0,53,95,0.3)" }
+              }
+            >
+              {status === "idle"    && <><span>Sign In</span><ArrowRight size={20} /></>}
+              {status === "loading" && <><Loader2 size={20} className="animate-spin" /><span>Signing in…</span></>}
+              {status === "success" && <><CheckCircle2 size={20} /><span>Access Granted</span></>}
+            </button>
+          </form>
         </div>
 
-        {/* Bottom meta row */}
-        <div className="flex justify-between items-center mt-4 px-1">
-          <span className="text-[10px] font-bold tracking-widest uppercase"
-            style={{ color: "rgba(148,163,184,0.35)" }}>
-            v2.4.0-PRO
-          </span>
-          <div className="flex items-center gap-3">
-            {["Privacy","Terms","Support"].map((link) => (
-              <a key={link} href="#"
-                className="text-[10px] font-semibold uppercase tracking-widest transition-colors"
-                style={{ color: "rgba(148,163,184,0.35)" }}
-                onMouseOver={(e) => (e.currentTarget.style.color = "rgba(96,165,250,0.7)")}
-                onMouseOut={(e) => (e.currentTarget.style.color = "rgba(148,163,184,0.35)")}>
-                {link}
-              </a>
-            ))}
-          </div>
+        {/* Footer note inside card */}
+        <div
+          className="flex items-center justify-center gap-2 px-10 py-5 border-t border-slate-100"
+          style={{ backgroundColor: "#f8fafc" }}
+        >
+          <ShieldCheck size={16} style={{ color: "#00355f" }} />
+          <p className="text-[13px] font-medium text-slate-500 text-center">
+            Authorized personnel only · IT Finance Department
+          </p>
         </div>
       </div>
+
+      {/* Below-card meta */}
+      <div className="flex items-center gap-6 mt-6">
+        {["Privacy Policy", "Terms of Service", "Support"].map((link) => (
+          <a
+            key={link}
+            href="#"
+            className="text-[13px] font-medium text-slate-400 hover:text-[#00355f] transition-colors"
+          >
+            {link}
+          </a>
+        ))}
+      </div>
+      <p className="text-[12px] text-slate-400 mt-2">v2.4.0-PRO</p>
     </div>
   );
 }

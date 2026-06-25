@@ -2,11 +2,11 @@ import { useState } from "react";
 import type { Transaction } from "../../types/transactions";
 import type { TransactionFormValues } from "../../types/transactions";
 import { EMPTY_FORM } from "../../types/transactions";
-import PageHeader from "../../components/transactions/PageHeader";
-import StatCards from "../../components/transactions/StatCards";
-import TransactionForm from "../../components/transactions/TransactionForm";
-import TransactionTable from "../../components/transactions/TransactionTable";
-import EditModal from "../../components/transactions/EditModal";
+import PageHeader from "../../components/Admin/transactions/PageHeader";
+import StatCards from "../../components/Admin/transactions/StatCards";
+import TransactionForm from "../../components/Admin/transactions/TransactionForm";
+import TransactionTable from "../../components/Admin/transactions/TransactionTable";
+import EditModal from "../../components/Admin/transactions/EditModal";
 
 const INITIAL_TRANSACTIONS: Transaction[] = [
   {

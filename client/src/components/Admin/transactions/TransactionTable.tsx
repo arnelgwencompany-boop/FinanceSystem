@@ -1,7 +1,7 @@
 import { Edit2, Trash2, ChevronLeft, ChevronRight, Search, Filter, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
-import type { Transaction } from "../../types/transactions";
-import { DEPARTMENTS } from "../../types/transactions";
+import type { Transaction } from "../../../types/transactions";
+import { DEPARTMENTS } from "../../../types/transactions";
 
 type Props = {
   transactions: Transaction[];

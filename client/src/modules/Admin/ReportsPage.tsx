@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from "react";
-import ReportsHeader from "../../components/reports/ReportHeader";
-import FilterPanel from "../../components/reports/Filterpanel";
-import ReportPreview from "../../components/reports/Reportpreview";
+import ReportsHeader from "../../components/Admin/reports/ReportHeader";
+import FilterPanel from "../../components/Admin/reports/Filterpanel";
+import ReportPreview from "../../components/Admin/reports/Reportpreview";
 import { MOCK_TRANSACTIONS } from "../../data/reportData";
 
 export default function Reports() {

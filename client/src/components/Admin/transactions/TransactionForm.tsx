@@ -1,8 +1,8 @@
 import { PlusCircle } from "lucide-react";
 import Papa from "papaparse";
-import type { TransactionFormValues } from "../../types/transactions";
-import type { Transaction } from "../../types/transactions";
-import { DEPARTMENTS } from "../../types/transactions";
+import type { TransactionFormValues } from "../../../types/transactions";
+import type { Transaction } from "../../../types/transactions";
+import { DEPARTMENTS } from "../../../types/transactions";
 type Props = {
   form: TransactionFormValues;
   income: number;

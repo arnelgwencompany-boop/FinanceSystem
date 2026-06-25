@@ -1,5 +1,5 @@
 import { Banknote, ShoppingCart, Landmark, History } from "lucide-react";
-import type { DashboardSummary } from "../../types/dashboard";
+import type { DashboardSummary } from "../../../types/dashboard";
 
 type Props = {
   summary: DashboardSummary;

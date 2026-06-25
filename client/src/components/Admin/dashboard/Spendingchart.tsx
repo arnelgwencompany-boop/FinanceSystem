@@ -1,4 +1,4 @@
-import type { DeptSpend } from "../../types/dashboard";
+import type { DeptSpend } from "../../../types/dashboard";
 
 type Props = {
   data: DeptSpend[];

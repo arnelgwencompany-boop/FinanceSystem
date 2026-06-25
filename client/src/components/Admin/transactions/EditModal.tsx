@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
-import type { Transaction } from "../../types/transactions";
-import { DEPARTMENTS } from "../../types/transactions";
+import type { Transaction } from "../../../types/transactions";
+import { DEPARTMENTS } from "../../../types/transactions";
 
 type Props = {
   transaction: Transaction | null;
