@@ -6,9 +6,9 @@ class Request(models.Model):
     STATUS_CHOICES = [
     ("draft", "Draft"),
     ("pending", "Pending"),
-    ("pending_supervisor", "Pending Supervisor"),
-    ("pending_director", "Pending Director"),
-    ("pending_finance", "Pending Finance"),
+    ("supervisor_approved", "Supervisor Approved"),
+    ("director_approved", "Director Approved"),
+    ("finance_approved", "Finance Approved"),
     ("approved", "Approved"),
     ("rejected", "Rejected"),
 ]
