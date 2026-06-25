@@ -3,11 +3,21 @@ from django.conf import settings
 
 # Create your models here.
 class Request(models.Model):
+    STATUS_CHOICES = [
+    ("draft", "Draft"),
+    ("pending_supervisor", "Pending Supervisor"),
+    ("pending_director", "Pending Director"),
+    ("pending_finance", "Pending Finance"),
+    ("approved", "Approved"),
+    ("rejected", "Rejected"),
+]
+
+
     request_no = models.CharField(max_length=50, unique=True)
 
     requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    employee_id = models.CharField(max_length=50)
-    department = models.CharField(max_length=100)
+    employee_id = models.CharField(max_length=50, blank=True, null=True)
+    department = models.CharField(max_length=100, blank=True, null=True)
     ext = models.CharField(max_length=10, blank=True, null=True)
 
     project_no = models.CharField(max_length=50, blank=True, null=True)
@@ -33,28 +43,28 @@ class Request(models.Model):
         ('TT', 'T/T'),
         ('CASH', 'Cash'),
     ]
-    payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES)
+    payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES, default='TT')
 
     PAYEE_TYPE_CHOICES = [
         ('EMPLOYEE', 'Employee'),
         ('SUPPLIER', 'Supplier'),
     ]
-    payee_type = models.CharField(max_length=20, choices=PAYEE_TYPE_CHOICES)
+    payee_type = models.CharField(max_length=20, choices=PAYEE_TYPE_CHOICES, default='EMPLOYEE')
     payee_name = models.CharField(max_length=255, blank=True, null=True)
 
     status = models.CharField(max_length=50, default="Pending")
 
     # Approval workflow
-    supervisor_approved = models.BooleanField(default=False)
-    director_approved = models.BooleanField(default=False)
-    finance_approved = models.BooleanField(default=False)
-
-    supervisor_approved_at = models.DateTimeField(null=True, blank=True)
-    director_approved_at = models.DateTimeField(null=True, blank=True)
-    finance_approved_at = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default="draft")
 
     # Attachments / notes
     invoice = models.FileField(upload_to='invoices/', null=True, blank=True)
     note = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.request_no:
+            last_id = Request.objects.count() + 1
+            self.request_no = f"REQ-{last_id:05d}"
+        super().save(*args, **kwargs)
