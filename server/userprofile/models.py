@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="userprofile")
 
     role = models.CharField(max_length=20, choices=[
         ('employee', 'Employee'),

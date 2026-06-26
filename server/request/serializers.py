@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Request
 from approval.models import Approval
 from django.db import transaction
+from approval.serializers import ApprovalSerializer
 
 class RequestSerializer(serializers.ModelSerializer):
     requested_by_name = serializers.SerializerMethodField()
@@ -69,3 +70,43 @@ class RequestCreateSerializer(serializers.ModelSerializer):
             Approval.objects.bulk_create(approvals)
 
         return req
+    
+class RequestWithApprovedSerializer(serializers.ModelSerializer):
+    requested_by_name = serializers.CharField(
+        source="requested_by.get_full_name", read_only=True
+    )
+
+    approvals = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Request
+        fields = [
+            "id",
+            "request_no",
+            "requested_by",
+            "requested_by_name",
+            "employee_id",
+            "department",
+            "ext",
+            "project_no",
+            "date",
+            "due_date",
+            "description",
+            "currency",
+            "amount",
+            "vat",
+            "without_vat",
+            "delivery_fee",
+            "payment_method",
+            "payee_type",
+            "payee_name",
+            "status",
+            "invoice",
+            "note",
+            "created_at",
+            "approvals",
+        ]
+
+    def get_approvals(self, obj):
+        approvals = obj.approvals.all().order_by("order")
+        return ApprovalSerializer(approvals, many=True).data

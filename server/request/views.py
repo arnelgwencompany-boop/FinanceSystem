@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Request
-from .serializers import RequestSerializer, RequestCreateSerializer
+from .serializers import RequestSerializer, RequestCreateSerializer, RequestWithApprovedSerializer
 # Create your views here.
 # EMPLOYEE VIEWS ==============================================
 class RequestCreateView(APIView):
@@ -76,11 +76,11 @@ class RequestSupUserListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user_department = request.user.department
+        user_department = request.user.userprofile.department
 
         queryset = Request.objects.filter(
             department=user_department
         ).order_by("-created_at")
 
-        serializer = RequestSerializer(queryset, many=True)
+        serializer =  RequestWithApprovedSerializer(queryset, many=True)
         return Response(serializer.data)

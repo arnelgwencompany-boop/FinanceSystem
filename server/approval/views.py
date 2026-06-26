@@ -17,7 +17,7 @@ class BaseApprovalView(APIView):
             raise PermissionDenied("Approval not found.")
 
     def check_permission(self, approval, user):
-        if approval.role != user.role:
+        if approval.role != user.userprofile.role:
             raise PermissionDenied("You cannot approve this step.")
 
     def process_approval(self, approval, user, status, comment=""):
@@ -44,7 +44,7 @@ class BaseApprovalView(APIView):
         return approval
     
 class ApproveView(BaseApprovalView):
-    def post(self, request, pk):
+    def put(self, request, pk):
         approval = self.get_object(pk)
 
         self.check_permission(approval, request.user)
@@ -59,7 +59,7 @@ class ApproveView(BaseApprovalView):
         return Response(ApprovalSerializer(updated).data)
     
 class RejectView(BaseApprovalView):
-    def post(self, request, pk):
+    def put(self, request, pk):
         approval = self.get_object(pk)
 
         self.check_permission(approval, request.user)
