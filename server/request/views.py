@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Request
 from .serializers import RequestSerializer, RequestCreateSerializer
 # Create your views here.
+# EMPLOYEE VIEWS ==============================================
 class RequestCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -70,3 +71,16 @@ class RequestDetailView(APIView):
         except Request.DoesNotExist:
             return Response({"error": "Not found"}, status=404)
         
+# SUPERVISOR AND DIRECTOR VIEWS ============================================
+class RequestSupUserListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_department = request.user.department
+
+        queryset = Request.objects.filter(
+            department=user_department
+        ).order_by("-created_at")
+
+        serializer = RequestSerializer(queryset, many=True)
+        return Response(serializer.data)

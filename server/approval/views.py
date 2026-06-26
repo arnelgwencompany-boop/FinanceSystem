@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
 from django.utils import timezone
 from .models import Approval
 from .serializers import ApprovalSerializer
@@ -41,4 +42,35 @@ class BaseApprovalView(APIView):
 
         approval.save()
         return approval
+    
+class ApproveView(BaseApprovalView):
+    def post(self, request, pk):
+        approval = self.get_object(pk)
+
+        self.check_permission(approval, request.user)
+
+        updated = self.process_approval(
+            approval,
+            request.user,
+            status="approved",
+            comment=request.data.get("comment", "")
+        )
+
+        return Response(ApprovalSerializer(updated).data)
+    
+class RejectView(BaseApprovalView):
+    def post(self, request, pk):
+        approval = self.get_object(pk)
+
+        self.check_permission(approval, request.user)
+
+        updated = self.process_approval(
+            approval,
+            request.user,
+            status="rejected",
+            comment=request.data.get("comment", "")
+        )
+
+        return Response(ApprovalSerializer(updated).data)
+    
     
