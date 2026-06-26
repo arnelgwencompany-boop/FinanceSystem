@@ -5,6 +5,12 @@ import LoginPage from "../modules/auth/LoginPage";
 // Employee
 import EmployeeRequestPage from "../modules/Employee/Employeerequestpage";
 
+//Supervisor
+import SupervisorApprovalsPage from "../modules/Supervisor/Supervisorapprovalspage";
+
+// Director
+import DirectorApprovalsPage from "../modules/Director/Directorapprovalspage";
+
 // Admin
 import DashboardPage    from "../modules/Admin/DashboardPage";
 import TransactionsPage from "../modules/Admin/TransactionsPage";
@@ -28,6 +34,12 @@ export default function AppRoutes() {
 
           {/* Employee */}
           <Route path="/request"       element={<EmployeeRequestPage />} />
+
+          {/* Supervisor */}
+          <Route path="/supervisor-approval" element={<SupervisorApprovalsPage />} />
+          
+          {/* Director */}
+          <Route path="/director-approval" element={<DirectorApprovalsPage />} />
 
           {/* Admin */}
           <Route path="/dashboard"     element={<DashboardPage />} />
