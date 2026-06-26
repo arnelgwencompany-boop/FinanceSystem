@@ -5,56 +5,191 @@ import LoginPage from "../modules/auth/LoginPage";
 // Employee
 import EmployeeRequestPage from "../modules/Employee/Employeerequestpage";
 
-//Supervisor
+// Supervisor
 import SupervisorApprovalsPage from "../modules/Supervisor/Supervisorapprovalspage";
 
 // Director
 import DirectorApprovalsPage from "../modules/Director/Directorapprovalspage";
 
 // Admin
-import DashboardPage    from "../modules/Admin/DashboardPage";
-import TransactionsPage from "../modules/Admin/TransactionsPage";
-import ApprovalsPage    from "../modules/Admin/ApprovalsPage";
-import ReportsPage      from "../modules/Admin/ReportsPage";
+import DashboardPage     from "../modules/Admin/DashboardPage";
+import TransactionsPage  from "../modules/Admin/TransactionsPage";
+import ApprovalsPage     from "../modules/Admin/ApprovalsPage";
+import ReportsPage       from "../modules/Admin/ReportsPage";
 import NotificationsPage from "../modules/Admin/NotificationsPage";
-import UserManagement   from "../modules/Admin/UserPage";
-import SettingsPage     from "../modules/Admin/SettingsPage"; 
+import UserManagement    from "../modules/Admin/UserPage";
+import SettingsPage      from "../modules/Admin/SettingsPage";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+type Role = "admin" | "supervisor" | "director" | "finance" | "employee";
+
+// ─── Read current user from localStorage ─────────────────────────────────────
+function getCurrentUser(): { name: string; role: Role; initials: string } | null {
+  try {
+    const raw = localStorage.getItem("user");
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+// ─── Redirect to the correct home page based on role ─────────────────────────
+function RoleHome() {
+  const user = getCurrentUser();
+  if (!user) return <Navigate to="/" replace />;
+
+  const roleHome: Record<Role, string> = {
+    admin:      "/dashboard",
+    supervisor: "/supervisor-approval",
+    director:   "/director-approval",
+    finance:    "/dashboard",
+    employee:   "/request",
+  };
+
+  return <Navigate to={roleHome[user.role]} replace />;
+}
+
+// ─── Protected Route — only allows listed roles ───────────────────────────────
+function ProtectedRoute({
+  element,
+  allowed,
+}: {
+  element: React.ReactElement;
+  allowed: Role[];
+}) {
+  const user = getCurrentUser();
+
+  // Not logged in → back to login
+  if (!user || !localStorage.getItem("token")) {
+    return <Navigate to="/" replace />;
+  }
+
+  // Wrong role → redirect to their own home
+  if (!allowed.includes(user.role)) {
+    return <RoleHome />;
+  }
+
+  return element;
+}
+
+// ─── Routes ──────────────────────────────────────────────────────────────────
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ── Public ─────────────────────────────────────────────────── */}
+        {/* ── Public ───────────────────────────────────────────────────── */}
         <Route path="/" element={<LoginPage />} />
 
-        {/* ── Protected (inside sidebar + topbar layout) ──────────────── */}
+        {/* ── Protected layout ─────────────────────────────────────────── */}
         <Route element={<MainLayout />}>
 
-          {/* Default redirect from /dashboard root
-          <Route index element={<Navigate to="/dashboard" replace />} /> */}
+          {/* Role-based home redirect */}
+          <Route path="/home" element={<RoleHome />} />
 
-          {/* Employee */}
-          <Route path="/request"       element={<EmployeeRequestPage />} />
+          {/* ── Employee ─────────────────────────────────────────────── */}
+          <Route
+            path="/request"
+            element={
+              <ProtectedRoute
+                element={<EmployeeRequestPage />}
+                allowed={["employee"]}
+              />
+            }
+          />
 
-          {/* Supervisor */}
-          <Route path="/supervisor-approval" element={<SupervisorApprovalsPage />} />
-          
-          {/* Director */}
-          <Route path="/director-approval" element={<DirectorApprovalsPage />} />
+          {/* ── Supervisor ───────────────────────────────────────────── */}
+          <Route
+            path="/supervisor-approval"
+            element={
+              <ProtectedRoute
+                element={<SupervisorApprovalsPage />}
+                allowed={["supervisor"]}
+              />
+            }
+          />
 
-          {/* Admin */}
-          <Route path="/dashboard"     element={<DashboardPage />} />
-          <Route path="/transactions"  element={<TransactionsPage />} />
-          <Route path="/approvals"     element={<ApprovalsPage />} />
-          <Route path="/reports"       element={<ReportsPage />} />
-          <Route path="/notifications" element={<NotificationsPage />} />
-          <Route path="/users"         element={<UserManagement />} />
-          <Route path="/settings"      element={<SettingsPage />} />
+          {/* ── Director ─────────────────────────────────────────────── */}
+          <Route
+            path="/director-approval"
+            element={
+              <ProtectedRoute
+                element={<DirectorApprovalsPage />}
+                allowed={["director"]}
+              />
+            }
+          />
 
-          {/* Catch-all inside layout → redirect to dashboard */}
-          {/* <Route path="*" element={<Navigate to="/dashboard" replace />} /> */}
+          {/* ── Admin & Finance shared routes ─────────────────────────── */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute
+                element={<DashboardPage />}
+                allowed={["admin", "finance", "supervisor", "director"]}
+              />
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <ProtectedRoute
+                element={<TransactionsPage />}
+                allowed={["admin", "finance", "supervisor"]}
+              />
+            }
+          />
+          <Route
+            path="/approvals"
+            element={
+              <ProtectedRoute
+                element={<ApprovalsPage />}
+                allowed={["admin"]}
+              />
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute
+                element={<ReportsPage />}
+                allowed={["admin", "finance", "supervisor", "director"]}
+              />
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute
+                element={<NotificationsPage />}
+                allowed={["admin", "finance", "supervisor", "director", "employee"]}
+              />
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute
+                element={<UserManagement />}
+                allowed={["admin"]}
+              />
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute
+                element={<SettingsPage />}
+                allowed={["admin", "finance", "supervisor", "director", "employee"]}
+              />
+            }
+          />
+
+          {/* Catch-all inside layout → role home */}
+          <Route path="*" element={<RoleHome />} />
         </Route>
 
-        {/* Catch-all outside layout → back to login */}
+        {/* Catch-all outside layout → login */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
