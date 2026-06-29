@@ -37,6 +37,7 @@ const ALL_MENU_ITEMS: MenuItem[] = [
   { name: "Submit Request",   path: "/request",            icon: FilePlus,        roles: ["employee"] },
   { name: "My Approvals",     path: "/supervisor-approval",icon: CheckCircle,     roles: ["supervisor"] },
   { name: "My Approvals",     path: "/director-approval",  icon: CheckCircle,     roles: ["director"] },
+  { name: "Finance Page",     path: "/finance-page",       icon: CheckCircle,     roles: ["finance"] },
   { name: "All Approvals",    path: "/approvals",          icon: CheckCircle,     roles: ["admin"] },
   { name: "Transactions",     path: "/transactions",       icon: ArrowLeftRight,  roles: ["admin",] },
   { name: "Reports",          path: "/reports",            icon: FileText,        roles: ["admin"] },

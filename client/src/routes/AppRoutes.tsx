@@ -11,6 +11,9 @@ import SupervisorApprovalsPage from "../modules/Supervisor/Supervisorapprovalspa
 // Director
 import DirectorApprovalsPage from "../modules/Director/Directorapprovalspage";
 
+// Finance
+import FinanceDashboard from "../modules/Finance/Financepage"
+
 // Admin
 import DashboardPage     from "../modules/Admin/DashboardPage";
 import TransactionsPage  from "../modules/Admin/TransactionsPage";
@@ -43,7 +46,7 @@ function RoleHome() {
     admin:      "/dashboard",
     supervisor: "/supervisor-approval",
     director:   "/director-approval",
-    finance:    "/dashboard",
+    finance:    "/finance-page  ",
     employee:   "/request",
   };
 
@@ -120,6 +123,16 @@ export default function AppRoutes() {
             }
           />
 
+           {/* ── Finance ─────────────────────────────────────────────── */}
+           <Route 
+              path="/finance-page"
+               element={
+                <ProtectedRoute
+                  element={<FinanceDashboard />}
+                  allowed={["finance"]}
+                />
+            }
+            />
           {/* ── Admin & Finance shared routes ─────────────────────────── */}
           <Route
             path="/dashboard"
