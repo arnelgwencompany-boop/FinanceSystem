@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from django.utils import timezone
 from .models import Approval
 from .serializers import ApprovalSerializer
+from .services import ApprovalService
 
 
 class BaseApprovalView(APIView):
@@ -54,6 +55,10 @@ class ApproveView(BaseApprovalView):
             request.user,
             status="approved",
             comment=request.data.get("comment", "")
+        )
+        ApprovalService.finalize_request_if_fully_approved(
+            updated.request,
+            request.user
         )
 
         return Response(ApprovalSerializer(updated).data)

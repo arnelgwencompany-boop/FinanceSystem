@@ -1,18 +1,27 @@
 from cash_release.models import CashRelease
-
 class ApprovalService:
-    def finalize_request_if_fully_approved(request_obj):
-        approvals = request_obj.approvals.all()
 
-        # Check if all approvals are approved
-        if all(a.status == "approved" for a in approvals):
+    @staticmethod
+    def finalize_request_if_fully_approved(request_obj, user=None):
+        print("Create Cash Release is Running")
+        required_roles = {"supervisor", "director", "finance"}
+
+        approvals = request_obj.approvals.filter(role__in=required_roles)
+
+        approved_roles = set(
+            approvals.filter(status="approved").values_list("role", flat=True)
+        )
+
+
+        if required_roles.issubset(approved_roles):
+
             request_obj.status = "approved"
             request_obj.save()
 
-            # Prevent duplicates
-            if not hasattr(request_obj, "cashrelease"):
+            if not hasattr(request_obj, "cash_release"):
                 CashRelease.objects.create(
                     request=request_obj,
                     amount=request_obj.amount,
-                    status="pending"
+                    status="pending",
+                    released_by=user   
                 )

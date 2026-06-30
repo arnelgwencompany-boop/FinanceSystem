@@ -5,7 +5,12 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Request
-from .serializers import RequestSerializer, RequestCreateSerializer, RequestWithApprovedSerializer
+from .serializers import (
+    RequestSerializer, 
+    RequestCreateSerializer, 
+    RequestWithApprovedSerializer,
+    RequestFinanceSerializer
+)
 # Create your views here.
 # EMPLOYEE VIEWS ==============================================
 class RequestCreateView(APIView):
@@ -83,4 +88,20 @@ class RequestSupUserListView(APIView):
         ).order_by("-created_at")
 
         serializer =  RequestWithApprovedSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+# FINANCE VIEWS ============================================
+class RequestFinanceListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        queryset = Request.objects.filter(
+            approvals__role="supervisor",
+            approvals__status="approved"
+        ).filter(
+            approvals__role="director",
+            approvals__status="approved"
+        ).distinct().order_by("-created_at")
+
+        serializer = RequestFinanceSerializer(queryset, many=True)
         return Response(serializer.data)

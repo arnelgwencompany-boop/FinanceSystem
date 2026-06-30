@@ -27,6 +27,7 @@ class Receipt(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='reviewed_receipts'
+        
     )
 
     review_notes = models.TextField(blank=True)
