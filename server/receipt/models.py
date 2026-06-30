@@ -3,7 +3,11 @@ from transaction.models import Transaction
 from django.conf import settings 
 # Create your models here.
 class Receipt(models.Model):
-    transaction = models.ForeignKey('transaction.Transaction', on_delete=models.CASCADE)
+    cash_release = models.ForeignKey(
+        'cash_release.CashRelease',
+        on_delete=models.CASCADE,
+        related_name='receipts'
+    )
 
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
@@ -27,7 +31,6 @@ class Receipt(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='reviewed_receipts'
-        
     )
 
     review_notes = models.TextField(blank=True)
