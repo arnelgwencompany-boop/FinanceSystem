@@ -179,6 +179,9 @@ export default function LoginPage() {
           .map((n: string) => n[0])
           .join("")
           .toUpperCase(),
+        email:      profile.user.email,
+        department: profile.department,
+        employeeId: profile.employee_id,
       };
 
       localStorage.setItem("user", JSON.stringify(user));

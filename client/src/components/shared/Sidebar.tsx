@@ -5,72 +5,67 @@ import {
   Users, ChevronRight, LogOut,
 } from "lucide-react";
 import logo from "../../../public/logo.png";
- 
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Role = "admin" | "supervisor" | "director" | "finance" | "employee";
- 
+
 interface MenuItem {
   name: string;
   path: string;
   icon: React.ElementType;
   roles: Role[];
 }
- 
-const ROLE_LABELS: Record<Role, string> = {
-  admin:      "Administrator",
-  supervisor: "Supervisor",
-  director:   "Director",
-  finance:    "Finance Officer",
-  employee:   "Employee",
-};
- 
-const ROLE_AVATAR_COLOR: Record<Role, string> = {
-  admin:      "linear-gradient(135deg,#2563eb,#1d4ed8)",
-  supervisor: "linear-gradient(135deg,#7c3aed,#6d28d9)",
-  director:   "linear-gradient(135deg,#0891b2,#0e7490)",
-  finance:    "linear-gradient(135deg,#059669,#047857)",
-  employee:   "linear-gradient(135deg,#d97706,#b45309)",
-};
- 
+
+interface CurrentUser {
+  name: string;
+  role: Role;
+  initials: string;
+  email?: string;
+  department?: string;
+  employeeId?: string;
+}
+
 const ALL_MENU_ITEMS: MenuItem[] = [
-  { name: "Dashboard",        path: "/dashboard",          icon: LayoutDashboard, roles: ["admin",] },
-  { name: "Submit Request",   path: "/request",            icon: FilePlus,        roles: ["employee"] },
-  { name: "My Approvals",     path: "/supervisor-approval",icon: CheckCircle,     roles: ["supervisor"] },
-  { name: "My Approvals",     path: "/director-approval",  icon: CheckCircle,     roles: ["director"] },
-  { name: "Finance Page",     path: "/finance-page",       icon: CheckCircle,     roles: ["finance"] },
-  { name: "All Approvals",    path: "/approvals",          icon: CheckCircle,     roles: ["admin"] },
-  { name: "Transactions",     path: "/transactions",       icon: ArrowLeftRight,  roles: ["admin",] },
-  { name: "Reports",          path: "/reports",            icon: FileText,        roles: ["admin"] },
-  { name: "User Management",  path: "/users",              icon: Users,           roles: ["admin"] },
-  { name: "Notifications",    path: "/notifications",      icon: Bell,            roles: ["admin","supervisor","director","finance","employee"] },
-  { name: "Settings",         path: "/settings",           icon: Settings,        roles: ["admin","supervisor","director","finance","employee"] },
+  { name: "Dashboard",        path: "/dashboard",           icon: LayoutDashboard, roles: ["admin"] },
+  { name: "Submit Request",   path: "/request",             icon: FilePlus,        roles: ["employee"] },
+  { name: "My Approvals",     path: "/supervisor-approval", icon: CheckCircle,     roles: ["supervisor"] },
+  { name: "My Approvals",     path: "/director-approval",   icon: CheckCircle,     roles: ["director"] },
+  { name: "Finance Page",     path: "/finance-page",        icon: CheckCircle,     roles: ["finance"] },
+  { name: "All Approvals",    path: "/approvals",           icon: CheckCircle,     roles: ["admin"] },
+  { name: "Transactions",     path: "/transactions",        icon: ArrowLeftRight,  roles: ["admin"] },
+  { name: "Reports",          path: "/reports",             icon: FileText,        roles: ["admin"] },
+  { name: "User Management",  path: "/users",               icon: Users,           roles: ["admin"] },
+  { name: "Notifications",    path: "/notifications",       icon: Bell,            roles: ["admin","supervisor","director","finance","employee"] },
+  { name: "Settings",         path: "/settings",            icon: Settings,        roles: ["admin","supervisor","director","finance","employee"] },
 ];
- 
+
 // ─── Read user from localStorage (set by LoginPage) ──────────────────────────
-function getCurrentUser() {
+function getCurrentUser(): CurrentUser {
   try {
     const raw = localStorage.getItem("user");
-    if (!raw) return { name: "Guest", role: "employee" as Role, initials: "G" };
-    return JSON.parse(raw) as { name: string; role: Role; initials: string };
+    if (!raw) return { name: "Guest", role: "employee", initials: "G" };
+    return JSON.parse(raw) as CurrentUser;
   } catch {
-    return { name: "Guest", role: "employee" as Role, initials: "G" };
+    return { name: "Guest", role: "employee", initials: "G" };
   }
 }
- 
+
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const user = getCurrentUser();
-  const { name, role, initials } = user;
- 
+  const { role,  } = user;
+
   const visibleItems = ALL_MENU_ITEMS.filter((item) => item.roles.includes(role));
- 
+
   const handleLogout = () => {
+    localStorage.removeItem("access");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("remember");
     navigate("/", { replace: true });
   };
- 
+
   return (
     <aside
       className="fixed left-0 top-0 h-full w-[270px] flex flex-col z-50"
@@ -79,7 +74,7 @@ export default function Sidebar() {
       {/* Top accent stripe */}
       <div className="h-1 w-full flex-shrink-0"
         style={{ background: "linear-gradient(90deg,#2563eb,#60a5fa)" }} />
- 
+
       {/* ── Logo + Brand ─────────────────────────────────────────────────── */}
       <div className="flex items-center gap-3.5 px-5 py-5 flex-shrink-0">
         <div
@@ -108,55 +103,22 @@ export default function Sidebar() {
             IT Finance Management
           </p>
         </div>
-      </div>
- 
-      {/* ── User card ────────────────────────────────────────────────────── */}
-      <div className="mx-4 mb-4 flex-shrink-0">
-        <div
-          className="flex items-center gap-3 px-4 py-3.5 rounded-2xl"
-          style={{
-            backgroundColor: "rgba(255,255,255,0.07)",
-            border: "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-[14px] font-extrabold text-white"
-            style={{ background: ROLE_AVATAR_COLOR[role] }}
-          >
-            {initials}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[14px] font-bold text-white leading-tight truncate">{name}</p>
-            <p className="text-[12px] font-medium mt-0.5 truncate" style={{ color: "#93c5fd" }}>
-              {ROLE_LABELS[role]}
-            </p>
-          </div>
-          <span
-            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-            style={{
-              backgroundColor: "#4ade80",
-              boxShadow: "0 0 7px #4ade80",
-              animation: "blink 2s ease-in-out infinite",
-            }}
-          />
-        </div>
-      </div>
- 
+      </div> 
       {/* Divider */}
       <div className="mx-5 mb-3 flex-shrink-0 h-px" style={{ backgroundColor: "rgba(255,255,255,0.08)" }} />
- 
+
       {/* Section label */}
       <p className="px-5 mb-2 text-[11px] font-bold tracking-widest uppercase flex-shrink-0"
         style={{ color: "rgba(148,163,184,0.6)" }}>
         Main Menu
       </p>
- 
+
       {/* ── Navigation ───────────────────────────────────────────────────── */}
       <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
         {visibleItems.map((item) => {
           const Icon     = item.icon;
           const isActive = location.pathname === item.path;
- 
+
           return (
             <NavLink
               key={item.path}
@@ -187,14 +149,15 @@ export default function Sidebar() {
           );
         })}
       </nav>
- 
+
       {/* Divider */}
       <div className="mx-5 mt-3 mb-3 flex-shrink-0 h-px" style={{ backgroundColor: "rgba(255,255,255,0.08)" }} />
- 
+
       {/* ── Sign Out ─────────────────────────────────────────────────────── */}
       <div className="px-3 pb-5 flex-shrink-0">
         <button
           onClick={handleLogout}
+          type="button"
           className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-150 cursor-pointer"
           style={{
             backgroundColor: "rgba(239,68,68,0.1)",
@@ -220,7 +183,7 @@ export default function Sidebar() {
           </span>
         </button>
       </div>
- 
+
       <style>{`
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
         nav::-webkit-scrollbar       { width: 3px; }

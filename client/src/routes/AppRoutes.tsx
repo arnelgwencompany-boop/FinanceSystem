@@ -12,7 +12,7 @@ import SupervisorApprovalsPage from "../modules/Supervisor/Supervisorapprovalspa
 import DirectorApprovalsPage from "../modules/Director/Directorapprovalspage";
 
 // Finance
-import FinanceDashboard from "../modules/Finance/Financepage"
+import FinanceDashboard from "../modules/Finance/Financepage";
 
 // Admin
 import DashboardPage     from "../modules/Admin/DashboardPage";
@@ -37,20 +37,37 @@ function getCurrentUser(): { name: string; role: Role; initials: string } | null
   }
 }
 
+// ─── Check if a valid auth token exists ───────────────────────────────────────
+// IMPORTANT: LoginPage and api.ts both save the token under "access".
+// "token" is only ever checked as a legacy fallback — never actually written
+// anywhere in this app — so checking ONLY "token" here was the root bug:
+// it always evaluated to null, so every protected route thought the user
+// was logged out.
+function isAuthenticated(): boolean {
+  return !!(localStorage.getItem("access") || localStorage.getItem("token"));
+}
+
+// ─── Role → home route map (single source of truth) ───────────────────────────
+// NOTE: no trailing whitespace in any of these — `"/finance-page  "` (with
+// trailing spaces) does NOT match the route `path="/finance-page"`, so that
+// extra whitespace silently broke the finance redirect.
+const ROLE_HOME: Record<Role, string> = {
+  admin:      "/dashboard",
+  supervisor: "/supervisor-approval",
+  director:   "/director-approval",
+  finance:    "/finance-page",
+  employee:   "/request",
+};
+
 // ─── Redirect to the correct home page based on role ─────────────────────────
 function RoleHome() {
   const user = getCurrentUser();
-  if (!user) return <Navigate to="/" replace />;
+  if (!user || !isAuthenticated()) return <Navigate to="/" replace />;
 
-  const roleHome: Record<Role, string> = {
-    admin:      "/dashboard",
-    supervisor: "/supervisor-approval",
-    director:   "/director-approval",
-    finance:    "/finance-page  ",
-    employee:   "/request",
-  };
+  const dest = ROLE_HOME[user.role];
+  if (!dest) return <Navigate to="/" replace />; // unknown role → safest fallback
 
-  return <Navigate to={roleHome[user.role]} replace />;
+  return <Navigate to={dest} replace />;
 }
 
 // ─── Protected Route — only allows listed roles ───────────────────────────────
@@ -64,7 +81,7 @@ function ProtectedRoute({
   const user = getCurrentUser();
 
   // Not logged in → back to login
-  if (!user || !localStorage.getItem("token")) {
+  if (!user || !isAuthenticated()) {
     return <Navigate to="/" replace />;
   }
 
@@ -123,17 +140,18 @@ export default function AppRoutes() {
             }
           />
 
-           {/* ── Finance ─────────────────────────────────────────────── */}
-           <Route 
-              path="/finance-page"
-               element={
-                <ProtectedRoute
-                  element={<FinanceDashboard />}
-                  allowed={["finance"]}
-                />
+          {/* ── Finance ──────────────────────────────────────────────── */}
+          <Route
+            path="/finance-page"
+            element={
+              <ProtectedRoute
+                element={<FinanceDashboard />}
+                allowed={["finance"]}
+              />
             }
-            />
-          {/* ── Admin & Finance shared routes ─────────────────────────── */}
+          />
+
+          {/* ── Admin & shared routes ──────────────────────────────────── */}
           <Route
             path="/dashboard"
             element={
