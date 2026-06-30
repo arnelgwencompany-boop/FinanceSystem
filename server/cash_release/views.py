@@ -20,6 +20,8 @@ class CashReleaseListCreateView(APIView):
 
     def post(self, request):
         serializer = CashReleaseSerializer(data=request.data)
+        if request.user.userprofile.role != "finance":
+            return Response({"error": "Only finance can release cash"}, status=403)
         if serializer.is_valid():
             serializer.save(released_by=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

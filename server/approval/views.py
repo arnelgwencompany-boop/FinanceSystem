@@ -56,10 +56,10 @@ class ApproveView(BaseApprovalView):
             status="approved",
             comment=request.data.get("comment", "")
         )
-        ApprovalService.finalize_request_if_fully_approved(
-            updated.request,
-            request.user
-        )
+        # ApprovalService.finalize_request_if_fully_approved(
+        #     updated.request,
+        #     request.user
+        # )
 
         return Response(ApprovalSerializer(updated).data)
     
