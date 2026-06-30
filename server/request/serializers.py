@@ -4,6 +4,7 @@ from approval.models import Approval
 from django.db import transaction
 from approval.serializers import ApprovalSerializer
 from cash_release.serializers import CashReleaseSerializer
+from receipt.serializers import ReceiptSerializer
 
 class RequestSerializer(serializers.ModelSerializer):
     requested_by_name = serializers.SerializerMethodField()
@@ -121,6 +122,7 @@ class RequestFinanceSerializer(serializers.ModelSerializer):
 
     approvals = serializers.SerializerMethodField()
     cash_release = serializers.SerializerMethodField() 
+    receipts = serializers.SerializerMethodField()
     class Meta:
         model = Request
         fields = [
@@ -139,7 +141,8 @@ class RequestFinanceSerializer(serializers.ModelSerializer):
             "payee_name",
             "status",
             "approvals",
-            "cash_release", 
+            "cash_release",
+            "receipts",
         ]
     
     def get_approvals(self, obj):
@@ -156,3 +159,15 @@ class RequestFinanceSerializer(serializers.ModelSerializer):
                 return CashReleaseSerializer(cash_release).data
 
         return None
+    
+    def get_receipts(self, obj):
+        finance_approval = obj.approvals.filter(role="finance").first()
+
+        if finance_approval and finance_approval.status == "approved":
+            cash_release = getattr(obj, "cashrelease", None)
+
+            if cash_release:
+                receipts = cash_release.receipts.all().order_by('-uploaded_at')
+                return ReceiptSerializer(receipts, many=True).data
+
+        return []
