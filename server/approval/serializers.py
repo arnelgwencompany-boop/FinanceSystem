@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Approval
 from django.utils import timezone
+from .services import ApprovalService
 
 class ApprovalSerializer(serializers.ModelSerializer):
     signed_by_name = serializers.CharField(
@@ -35,4 +36,8 @@ class ApprovalSerializer(serializers.ModelSerializer):
             instance.signed_at = timezone.now()
 
         instance.save()
+
+          # CHECK FULL APPROVAL AFTER SAVE
+        ApprovalService.finalize_request_if_fully_approved(instance.request)
+
         return instance
