@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import {
   Receipt, Upload, X, CheckCircle2, Clock, Wallet,
-  FileText, Eye, AlertTriangle, ChevronDown, Search,
+  FileText, Eye, AlertTriangle, Search,
   Loader2, Image, File, Trash2, CloudUpload, ArrowRight,
 } from "lucide-react";
 

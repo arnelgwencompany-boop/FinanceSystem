@@ -8,6 +8,7 @@ from .models import Request
 from .serializers import (
     RequestSerializer, 
     RequestCreateSerializer, 
+    RequesteEmployeeSerializer,
     RequestWithApprovedSerializer,
     RequestFinanceSerializer
 )
@@ -31,12 +32,13 @@ class RequestCreateView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# for employee request list
 class RequestListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         queryset = Request.objects.all().order_by("-created_at")
-        serializer = RequestSerializer(queryset, many=True)
+        serializer = RequesteEmployeeSerializer(queryset, many=True)
         return Response(serializer.data) 
 
 class RequestDetailView(APIView):

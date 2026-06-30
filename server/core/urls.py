@@ -31,4 +31,5 @@ urlpatterns = [
     path('api/', include('cash_release.urls')),
     path('api/', include('transaction.urls')),
     path('api/', include('receipt.urls')),
+    path('api/', include('notifications.urls')),
 ]

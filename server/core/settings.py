@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'cash_release',
     'transaction',
     'receipt',
+    'notifications',
 ]
 
 MIDDLEWARE = [

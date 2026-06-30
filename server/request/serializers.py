@@ -72,6 +72,64 @@ class RequestCreateSerializer(serializers.ModelSerializer):
             Approval.objects.bulk_create(approvals)
 
         return req
+    
+# EMPLOYEE SERIALIZER
+class RequesteEmployeeSerializer(serializers.ModelSerializer):
+    requested_by_name = serializers.CharField(
+        source="requested_by.get_full_name", read_only=True
+    )
+
+    approvals = serializers.SerializerMethodField()
+    cash_release = serializers.SerializerMethodField() 
+    receipts = serializers.SerializerMethodField()
+    class Meta:
+        model = Request
+        fields = [
+            "id",
+            "request_no",
+            "requested_by_name",
+            "department",
+            "project_no",
+            "date",
+            "due_date",
+            "description",
+            "currency",
+            "amount",
+            "payment_method",
+            "payee_type",
+            "payee_name",
+            "status",
+            "approvals",
+            "cash_release",
+            "receipts",
+        ]
+    
+    def get_approvals(self, obj):
+        approvals = obj.approvals.all().order_by("order")
+        return ApprovalSerializer(approvals, many=True).data
+
+    def get_cash_release(self, obj):
+        finance_approval = obj.approvals.filter(role="finance").first()
+
+        if finance_approval and finance_approval.status == "approved":
+            cash_release = getattr(obj, "cashrelease", None)
+
+            if cash_release:
+                return CashReleaseSerializer(cash_release).data
+
+        return None
+    
+    def get_receipts(self, obj):
+        finance_approval = obj.approvals.filter(role="finance").first()
+
+        if finance_approval and finance_approval.status == "approved":
+            cash_release = getattr(obj, "cashrelease", None)
+
+            if cash_release:
+                receipts = cash_release.receipts.all().order_by('-uploaded_at')
+                return ReceiptSerializer(receipts, many=True).data
+
+        return []
 
 #   APPROVED SERIALIZER
 class RequestWithApprovedSerializer(serializers.ModelSerializer):

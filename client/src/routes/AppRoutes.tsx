@@ -4,6 +4,8 @@ import LoginPage from "../modules/auth/LoginPage";
 
 // Employee
 import EmployeeRequestPage from "../modules/Employee/Employeerequestpage";
+import EmployeeRequestList from "../modules/Employee/Employeerequestlist"
+import EmployeeReceiptPage from "../modules/Employee/Employeereceipt"
 
 // Supervisor
 import SupervisorApprovalsPage from "../modules/Supervisor/Supervisorapprovalspage";
@@ -113,6 +115,24 @@ export default function AppRoutes() {
             element={
               <ProtectedRoute
                 element={<EmployeeRequestPage />}
+                allowed={["employee"]}
+              />
+            }
+          />
+           <Route
+            path="/request-list"
+            element={
+              <ProtectedRoute
+                element={<EmployeeRequestList />}
+                allowed={["employee"]}
+              />
+            }
+          />
+           <Route
+            path="/request-receipt"
+            element={
+              <ProtectedRoute
+                element={<EmployeeReceiptPage />}
                 allowed={["employee"]}
               />
             }

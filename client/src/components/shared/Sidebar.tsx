@@ -2,7 +2,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, ArrowLeftRight, FileText,
   CheckCircle, Bell, Settings, FilePlus,
-  Users, ChevronRight, LogOut,
+  Users, ChevronRight, LogOut, ClipboardList, Receipt
 } from "lucide-react";
 import logo from "../../../public/logo.png";
 
@@ -28,6 +28,8 @@ interface CurrentUser {
 const ALL_MENU_ITEMS: MenuItem[] = [
   { name: "Dashboard",        path: "/dashboard",           icon: LayoutDashboard, roles: ["admin"] },
   { name: "Submit Request",   path: "/request",             icon: FilePlus,        roles: ["employee"] },
+  { name: "List Request", path: "/request-list", icon: ClipboardList, roles: ["employee"] },
+  { name: "Receipt Request", path: "/request-receipt", icon: Receipt, roles: ["employee"] },
   { name: "My Approvals",     path: "/supervisor-approval", icon: CheckCircle,     roles: ["supervisor"] },
   { name: "My Approvals",     path: "/director-approval",   icon: CheckCircle,     roles: ["director"] },
   { name: "Finance Page",     path: "/finance-page",        icon: CheckCircle,     roles: ["finance"] },
