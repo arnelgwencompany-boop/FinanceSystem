@@ -1,12 +1,13 @@
 import { useState, useRef } from "react";
-import { FileText, Send, Save, X, CheckCircle2, ArrowLeft } from "lucide-react";
+import { FileText, Send, X, CheckCircle2, ArrowLeft } from "lucide-react";
 import type { RequestFormData } from "../../types/requestForm";
 import { EMPTY } from "../../types/requestForm";
 import { RequestorSection, DescriptionSection, FinancialSection, PayeeSection } from "../../components/Employee/request/Formsections";
 import DocumentPreview from "../../components/Employee/request/Documentpreview";
 import { createRequest } from "../../apis/employeeRequest";
 import LoadingScreen from "../../components/ui/LoadingScreen";
-
+import type { ToastType } from "../../components/ui/Toast";
+import Toast from "../../components/ui/Toast";
 
 function validate(data: RequestFormData): Record<string, string> {
   const e: Record<string, string> = {};
@@ -37,6 +38,19 @@ export default function EmployeeRequestPage() {
   const [status,  setStatus]  = useState<"idle" | "loading" | "success">("idle");
   const printRef = useRef<HTMLDivElement>(null!);
   const [loading, setLoading] = useState(false);
+  // Toast state control
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: ToastType;
+  }>({
+    show: false,
+    message: "",
+    type: "success",
+  });
+  const triggerToast = (message: string, type: ToastType) => {
+    setToast({ show: true, message, type });
+  };
 
   const set = <K extends keyof RequestFormData>(k: K, v: RequestFormData[K]) => {
     setForm((p) => ({ ...p, [k]: v }));
@@ -52,22 +66,23 @@ export default function EmployeeRequestPage() {
     setLoading(true);
     // POST /api/requests/ — replace with real API call
     createRequest(form)
-      .then(() => setStatus("success"))
+      .then(() => {
+        setStatus("success");
+        triggerToast("Request submitted successfully.", "success");
+      })
       .catch((error) => {
         console.error("Error creating request:", error);
         setStatus("idle");
+        triggerToast("Failed to submit request.", "error");
       })
       .finally(() => setLoading(false));
-  };
-
-  const handleDraft = () => {
-    alert("Draft saved successfully.");
   };
 
   const handleReset = () => {
     setForm(EMPTY);
     setErrors({});
     setStatus("idle");
+    triggerToast("Reset successfully.", "success");
   };
 
   const handlePrint = () => {
@@ -117,6 +132,15 @@ export default function EmployeeRequestPage() {
 
   return (
     <main className="mt-5 min-h-[calc(100vh-64px)] bg-[#f7f9fb] overflow-y-auto">
+      {/* Toast notification */}
+        {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast((prev) => ({ ...prev, show: false }))}
+        />
+      )}
+
       <div className="px-8 py-8 max-w-[1700px] mx-auto">
 
         {/* ── Page header ──────────────────────────────────────────────────── */}
@@ -148,10 +172,6 @@ export default function EmployeeRequestPage() {
                   ? <><span className="animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"/> Submitting…</>
                   : <><Send size={18}/> Submit Request</>}
               </button>
-              <button type="button" onClick={handleDraft}
-                className="flex items-center justify-center gap-2.5 px-8 py-4 bg-white text-[#00355f] border-2 border-[#00355f] text-[16px] font-bold rounded-xl hover:bg-slate-50 transition-all w-full sm:w-auto">
-                <Save size={18}/> Save as Draft
-              </button>
               <button type="button" onClick={handleReset}
                 className="flex items-center justify-center gap-2.5 px-8 py-4 text-slate-500 border-2 border-slate-200 text-[16px] font-bold rounded-xl hover:bg-slate-50 transition-all w-full sm:w-auto">
                 <X size={18}/> Clear Form
@@ -161,6 +181,8 @@ export default function EmployeeRequestPage() {
 
           {/* RIGHT — live document preview ─────────────────────────────────── */}
           <DocumentPreview data={form} printRef={printRef} onPrint={handlePrint}/>
+
+          
         </div>
       </div>
     </main>
