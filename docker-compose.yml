@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  backend:
+    build: ./server
+    container_name: django_app
+    volumes:
+      - ./server:/app
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./client
+    container_name: react_app
+    volumes:
+      - ./client:/app
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_server
+    ports:
+      - "80:80"
+    volumes:
+      - ./client/dist:/app/build
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - frontend
