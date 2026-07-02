@@ -51,8 +51,6 @@ class Request(models.Model):
         ('SUPPLIER', 'Supplier'),
     ]
     payee_type = models.CharField(max_length=20, choices=PAYEE_TYPE_CHOICES, default='EMPLOYEE')
-    payee_name = models.CharField(max_length=255, blank=True, null=True)
-
     status = models.CharField(max_length=50, default="Pending")
 
     # Approval workflow

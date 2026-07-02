@@ -4,6 +4,7 @@ import type { RequestFormData } from "../../types/requestForm";
 import { EMPTY } from "../../types/requestForm";
 import { RequestorSection, DescriptionSection, FinancialSection, PayeeSection } from "../../components/Employee/request/Formsections";
 import DocumentPreview from "../../components/Employee/request/Documentpreview";
+import { createRequest } from "../../apis/createRequest";
 
 function validate(data: RequestFormData): Record<string, string> {
   const e: Record<string, string> = {};
@@ -46,7 +47,12 @@ export default function EmployeeRequestPage() {
     setErrors({});
     setStatus("loading");
     // POST /api/requests/ — replace with real API call
-    setTimeout(() => setStatus("success"), 1600);
+    createRequest(form)
+      .then(() => setStatus("success"))
+      .catch((error) => {
+        console.error("Error creating request:", error);
+        setStatus("idle");
+      });
   };
 
   const handleDraft = () => {

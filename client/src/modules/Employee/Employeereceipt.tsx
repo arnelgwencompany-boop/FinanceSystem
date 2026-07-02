@@ -487,10 +487,10 @@ export default function EmployeeReceiptPage() {
   const canUpload = (r: MyRequest) => r.status === "Awaiting Receipt" || r.status === "Mismatch Detected";
 
   return (
-    <main className="ml-[270px] mt-16 min-h-[calc(100vh-64px)] bg-[#f7f9fb] overflow-y-auto">
+    <main className="mt-5 min-h-[calc(100vh-64px)] bg-[#f7f9fb] overflow-y-auto">
       <ToastContainer toasts={toasts} dismiss={dismiss}/>
 
-      <div className="px-8 py-8 max-w-4xl mx-auto space-y-6">
+      <div className="px-8 py-8 max-w-[1700px] mx-auto space-y-6">
 
         {/* ── Header ────────────────────────────────────────────────────── */}
         <div className="flex items-center gap-4">
