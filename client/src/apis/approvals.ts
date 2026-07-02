@@ -1,5 +1,19 @@
 import api from "./api";
 
+
+// get the requests for the supervisor
+export const getSupervisorRequests = async () => {
+  try {
+    const response = await api.get("sup-requests/");
+    return response.data;
+  } catch (error: any) {
+    console.error("Supervisor Requests Error:", error.response?.data);
+    throw error.response?.data || {
+      message: "Failed to fetch supervisor requests",
+    };
+  }
+};
+
 //  Approve
 export const approveRequest = async (
   approvalId: number,

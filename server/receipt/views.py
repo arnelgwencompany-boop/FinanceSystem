@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
-from server.notifications.models import Notification
+from notifications.models import Notification
 from .models import Receipt
 from .serializers import ReceiptUploadSerializer
 from .serializers import ReceiptSerializer
