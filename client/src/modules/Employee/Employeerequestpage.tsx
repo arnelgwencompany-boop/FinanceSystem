@@ -4,7 +4,9 @@ import type { RequestFormData } from "../../types/requestForm";
 import { EMPTY } from "../../types/requestForm";
 import { RequestorSection, DescriptionSection, FinancialSection, PayeeSection } from "../../components/Employee/request/Formsections";
 import DocumentPreview from "../../components/Employee/request/Documentpreview";
-import { createRequest } from "../../apis/createRequest";
+import { createRequest } from "../../apis/employeeRequest";
+import LoadingScreen from "../../components/ui/LoadingScreen";
+
 
 function validate(data: RequestFormData): Record<string, string> {
   const e: Record<string, string> = {};
@@ -34,6 +36,7 @@ export default function EmployeeRequestPage() {
   const [errors,  setErrors]  = useState<Record<string, string>>({});
   const [status,  setStatus]  = useState<"idle" | "loading" | "success">("idle");
   const printRef = useRef<HTMLDivElement>(null!);
+  const [loading, setLoading] = useState(false);
 
   const set = <K extends keyof RequestFormData>(k: K, v: RequestFormData[K]) => {
     setForm((p) => ({ ...p, [k]: v }));
@@ -46,13 +49,15 @@ export default function EmployeeRequestPage() {
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
     setStatus("loading");
+    setLoading(true);
     // POST /api/requests/ — replace with real API call
     createRequest(form)
       .then(() => setStatus("success"))
       .catch((error) => {
         console.error("Error creating request:", error);
         setStatus("idle");
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const handleDraft = () => {
@@ -80,6 +85,13 @@ export default function EmployeeRequestPage() {
     win.focus();
     setTimeout(() => { win.print(); win.close(); }, 400);
   };
+
+  // laoding screen
+  if (loading) {
+    return (
+      <LoadingScreen message="Submitting request…" />
+    );
+  }
 
   // ── Success screen ─────────────────────────────────────────────────────────
   if (status === "success") {

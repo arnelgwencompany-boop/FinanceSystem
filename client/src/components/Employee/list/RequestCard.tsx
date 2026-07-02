@@ -22,8 +22,16 @@ interface Props {
   onToggle: () => void;
 }
 
+// Normalize any casing the API might return ("Approved", "APPROVED" → "approved")
+function normalizeStatus(raw: string): Request["status"] {
+  const lower = raw?.toLowerCase();
+  if (lower === "approved" || lower === "rejected" || lower === "pending") return lower;
+  return "pending"; // safe fallback — won't crash; shows as amber
+}
+
 export default function RequestCard({ req, expanded, onToggle }: Props) {
-  const badge = STATUS_STYLE[req.status];
+  const status = normalizeStatus(req.status);
+  const badge  = STATUS_STYLE[status];
 
   return (
     <div
@@ -64,7 +72,7 @@ export default function RequestCard({ req, expanded, onToggle }: Props) {
           </div>
           <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${badge.bg} ${badge.text}`}>
             <span className={`h-1.5 w-1.5 rounded-full ${badge.dot}`} />
-            {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+            {status.charAt(0).toUpperCase() + status.slice(1)}
           </span>
           <ChevronDown
             size={16}

@@ -13,3 +13,13 @@ export const createRequest = async (payload: RequestFormData) => {
     };
   }
 };
+
+export const getRequests = async () => {
+  try {
+    const response = await api.get("requests/");
+    return response.data;
+  } catch (error: any) {
+    console.error("Get Requests Error:", error.response?.data);
+    throw error.response?.data || { message: "Failed to fetch requests" };
+  }
+};

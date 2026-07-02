@@ -1,4 +1,5 @@
 import { Plus, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { FilterStatus } from "../../../types/requestList";
 
 interface Props {
@@ -16,6 +17,8 @@ const FILTERS: { label: string; value: FilterStatus }[] = [
 ];
 
 export default function Toolbar({ query, onQuery, filter, onFilter }: Props) {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-wrap items-center gap-3">
       {/* Search */}
@@ -54,6 +57,7 @@ export default function Toolbar({ query, onQuery, filter, onFilter }: Props) {
       {/* New request */}
       <button
         type="button"
+        onClick={() => navigate("/request")}
         className="flex flex-shrink-0 items-center gap-2 rounded-xl bg-[#00355f] px-4 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-[#0f4c81]"
       >
         <Plus size={16} /> New request
