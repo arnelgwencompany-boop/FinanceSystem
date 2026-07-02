@@ -2,9 +2,12 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+
+from server.notifications.models import Notification
 from .models import Receipt
 from .serializers import ReceiptUploadSerializer
 from .serializers import ReceiptSerializer
+from django.contrib.auth.models import User
 # Create your views here.
 class ReceiptListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -20,11 +23,28 @@ class ReceiptListCreateView(APIView):
 
     def post(self, request):
         serializer = ReceiptUploadSerializer(data=request.data)
-
         if serializer.is_valid():
-            serializer.save(uploaded_by=request.user)
+            receipt = serializer.save(uploaded_by=request.user)
+            #  get related request
+            req = receipt.request
+            employee = request.user
+            department = employee.userprofile.department
+            #  find finance users (same department)
+            finance_users = User.objects.filter(
+                userprofile__department=department,
+                userprofile__role="finance"
+            )
+            #  notify all finance users
+            for finance in finance_users:
+                Notification.objects.create(
+                    recipient=finance,
+                    sender=employee,
+                    request=req,
+                    notification_type="receipt_uploaded",
+                    title="Receipt Uploaded",
+                    message="An employee uploaded a receipt. Please review."
+                )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class ReceiptDetailView(APIView):

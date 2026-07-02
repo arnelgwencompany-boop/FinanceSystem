@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from .models import CashRelease
 from .serializers import CashReleaseSerializer
+from notifications.models import Notification
 
 class CashReleaseListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -20,11 +21,29 @@ class CashReleaseListCreateView(APIView):
 
     def post(self, request):
         serializer = CashReleaseSerializer(data=request.data)
+
         if request.user.userprofile.role != "finance":
             return Response({"error": "Only finance can release cash"}, status=403)
+
         if serializer.is_valid():
-            serializer.save(released_by=request.user)
+            cash_release = serializer.save(released_by=request.user)
+
+            # get related request and employee
+            req = cash_release.request   # make sure serializer returns this
+            employee = req.employee
+
+            # notify employee
+            Notification.objects.create(
+                recipient=employee,
+                sender=request.user,
+                request=req,
+                notification_type="cash_released",
+                title="Cash Released",
+                message="Your cash is now ready to claim."
+            )
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class CashReleaseDetailView(APIView):

@@ -3,6 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.models import User
+from notifications.models import Notification
 
 from .models import Request
 from .serializers import (
@@ -25,6 +27,28 @@ class RequestCreateView(APIView):
 
         if serializer.is_valid():
             request_obj = serializer.save()
+
+            employee = request.user
+            employee_profile = employee.userprofile  # adjust if different related_name
+            department = employee_profile.department
+
+            #  find supervisor in same department
+            supervisor = User.objects.filter(
+                userprofile__department=department,
+                userprofile__role="supervisor"
+            ).first()
+
+            # create notification if supervisor exists
+            if supervisor:
+                Notification.objects.create(
+                    recipient=supervisor,
+                    sender=employee,
+                    request=request_obj,
+                    notification_type="request_created",
+                    title="New Request",
+                    message="A new request needs your approval"
+                )
+
             return Response(
                 RequestSerializer(request_obj).data,
                 status=status.HTTP_201_CREATED
