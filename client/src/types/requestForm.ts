@@ -3,9 +3,9 @@ export type PaymentMethod = "CASH" | "T/T";
 export type PayeeType     = "EMPLOYEE" | "SUPPLIER";
 
 export interface RequestFormData {
-  employee_id:    string;
-  department:     string;
-  ext:            string;
+  employee_id?:    string;
+  department?:     string;
+  ext?:            string;
   project_no:     string;
   date:           string;
   due_date:       string;
